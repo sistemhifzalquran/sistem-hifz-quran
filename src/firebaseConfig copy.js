@@ -11,7 +11,7 @@ const config = {
   messagingSenderId: ""
 };
 firebase.initializeApp(config);
-
+//example
 // firebase utils
 const db = firebase.firestore();
 const auth = firebase.auth();
