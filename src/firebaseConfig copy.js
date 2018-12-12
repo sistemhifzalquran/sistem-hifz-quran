@@ -3,12 +3,12 @@ import "firebase/firestore";
 
 // firebase init goes here
 const config = {
-  apiKey: "AIzaSyBrLl_JlTHjKvCOhFJOTpOZzrtJdkPD22Q",
-  authDomain: "sistem-hifz-quran.firebaseapp.com",
-  databaseURL: "https://sistem-hifz-quran.firebaseio.com",
-  projectId: "sistem-hifz-quran",
-  storageBucket: "sistem-hifz-quran.appspot.com",
-  messagingSenderId: "258732248861"
+  apiKey: "",
+  authDomain: "",
+  databaseURL: "",
+  projectId: "",
+  storageBucket: "",
+  messagingSenderId: ""
 };
 firebase.initializeApp(config);
 
