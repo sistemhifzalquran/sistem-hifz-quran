@@ -55,12 +55,11 @@ export default {
       performingRequest: false,
       errorMsg: "",
       inputRules: [
-        v => v.length == 12 || 'Pastikan No Kad Pengenalan Mencukupi',
-
+        v => v.length == 12 || "Pastikan No Kad Pengenalan Mencukupi"
       ],
       inputRulesPassword: [
-        v => v.length >= 6 && v.length <= 32 || 'Pastikan Kata Laluan Mencukupi',
-
+        v =>
+          (v.length >= 6 && v.length <= 32) || "Pastikan Kata Laluan Mencukupi"
       ]
     };
   },
@@ -74,7 +73,7 @@ export default {
     },
     login() {
       this.errorMsg = "";
-      if(this.$refs.form.validate()) {
+      if (this.$refs.form.validate()) {
         this.performingRequest = true;
         fb.auth
           .signInWithEmailAndPassword(
@@ -85,7 +84,18 @@ export default {
             this.$store.commit("setCurrentUser", user.user);
             this.$store.dispatch("fetchUserProfile");
             this.performingRequest = false;
-            this.$router.push("/dashboard");
+            fb.usersCollection
+              .doc(user.user.uid)
+              .get()
+              .then(function(doc) {
+                if (doc.data().admin == true) {
+                  console.log("go to admin");
+                  this.$router.push({ name: "Admin" });
+                } else {
+                  console.log("go to gogogogo");
+                  this.$router.push({ name: "Dashboard" });
+                }
+              });
           })
           .catch(err => {
             console.log(err);
