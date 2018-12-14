@@ -90,12 +90,19 @@ export default {
               .then(function(doc) {
                 if (doc.data().admin == true) {
                   console.log("go to admin");
-                  this.$router.push({ name: "Admin" });
+                  return true;
                 } else {
                   console.log("go to gogogogo");
-                  this.$router.push({ name: "Dashboard" });
+                  return false;
                 }
-              });
+              }).then(x =>{
+            if(x == true){
+              this.$router.push({ name: "Admin" });
+            }else{
+              this.$router.push({ name: "Dashboard" });
+
+            }
+          });
           })
           .catch(err => {
             console.log(err);
