@@ -15,10 +15,10 @@ const router = new Router({
   routes: [
     {
       path: "*",
-      redirect: "/dashboard"
+      redirect: "/login"
     },
     {
-      path: "/",
+      path: "/login",
       name: "Login",
       component: Login
     },
@@ -48,14 +48,40 @@ router.beforeEach((to, from, next) => {
   if (requiresAuth && !currentUser) {
     next("/login");
   } else if (to.name == 'Login' && currentUser) {
-    const x = usersCollection.get(currentUser.uid).data().admin;
-
-    if (x) {
-      return router.push({ name: 'Admin' });
-    } else {
-      return router.push({ name: 'Dashboard' });
-    }
-
+    usersCollection
+      .doc(currentUser.uid)
+      .get()
+      .then(function (doc) {
+        if (doc.data().admin == true) {
+          console.log("go to admin");
+          return router.push({ name: "Admin" });
+        } else {
+          console.log("go to gogogogo");
+          return router.push({ name: "Dashboard" });
+        }
+      })
+  } else if (to.name == 'Admin' && currentUser) {
+    usersCollection
+      .doc(currentUser.uid)
+      .get()
+      .then(function (doc) {
+        if (doc.data().admin == true) {
+          return next()
+        } else {
+          return router.push({ name: "Dashboard" });
+        }
+      })
+  } else if (to.name == 'Dashboard' && currentUser) {
+    usersCollection
+      .doc(currentUser.uid)
+      .get()
+      .then(function (doc) {
+        if (doc.data().admin == true) {
+          return router.push({ name: "Admin" });
+        } else {
+          return next()
+        }
+      })
   } else if (requiresAuth && currentUser) {
     next();
   } else {
