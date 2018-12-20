@@ -5,8 +5,8 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-
-    currentGroup: 'kamil',
+    groupList:[{name:"2018"},{name:"form 1 2018"},{name:"2017"},{name:"2019"}],
+    currentGroup: '2018',
 
   },
   mutations: {

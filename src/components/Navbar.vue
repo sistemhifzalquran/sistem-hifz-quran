@@ -10,7 +10,7 @@
           <span>{{currentGroup}}</span>
         </v-btn>
         <v-list>
-          <v-list-tile v-for="group in groups" :key="group.name" @click="setCurrentGroup(group.name)">
+          <v-list-tile v-for="group in groupList" :key="group.name" @click="setCurrentGroup(group.name)">
             <v-list-tile-title>{{group.name}}</v-list-tile-title>
           </v-list-tile>
         </v-list>
@@ -28,10 +28,12 @@ export default {
   data() {
     return {
       drawer: false,
-      groups: [{ name: "2017" }, { name: "huffaz" }]
     };
   },
   computed:{
+    groupList(){
+      return this.$store.state.groupList;
+    },
     currentGroup(){
       return this.$store.state.currentGroup;
     }
