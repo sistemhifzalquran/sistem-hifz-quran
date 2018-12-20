@@ -10,7 +10,11 @@
           <span>{{currentGroup}}</span>
         </v-btn>
         <v-list>
-          <v-list-tile v-for="group in groupList" :key="group.name" @click="setCurrentGroup(group.name)">
+          <v-list-tile
+            v-for="group in groupList"
+            :key="group.name"
+            @click="setCurrentGroup(group.name)"
+          >
             <v-list-tile-title>{{group.name}}</v-list-tile-title>
           </v-list-tile>
         </v-list>
@@ -24,24 +28,17 @@
   </nav>
 </template>
 <script>
+import { mapState } from "vuex";
 export default {
   data() {
     return {
-      drawer: false,
+      drawer: false
     };
   },
-  computed:{
-    groupList(){
-      return this.$store.state.groupList;
-    },
-    currentGroup(){
-      return this.$store.state.currentGroup;
-    }
-  },
-  methods:{
-    setCurrentGroup: function(groupChoosed){
-      this.$store.dispatch('setCurrentGroup',groupChoosed)
-
+  computed: mapState(["groupList", "currentGroup"]),
+  methods: {
+    setCurrentGroup: function(groupChoosed) {
+      this.$store.dispatch("setCurrentGroup", groupChoosed);
     }
   }
 };
