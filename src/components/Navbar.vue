@@ -19,15 +19,17 @@
           </v-list-tile>
           <v-divider></v-divider>
           <v-dialog max-width="600px">
-            <v-list-tile @click="" slot="activator">
-              <v-list-tile-title >Tambah Group</v-list-tile-title>
+            <v-list-tile @click slot="activator">
+              <v-list-tile-title>Tambah Group</v-list-tile-title>
             </v-list-tile>
             <v-card>
-              <v-card-title><h2>Group Baru</h2></v-card-title>
+              <v-card-title>
+                <h2>Group Baru</h2>
+              </v-card-title>
               <v-card-text>
                 <v-form class="text-xs-right">
                   <v-text-field prepend-icon="group_add" label="Group Name" v-model="newGroupName"></v-text-field>
-                  <v-btn>Hantar</v-btn>
+                  <v-btn @click="createNewGroup" :loading="performingRequest ? true : false">Hantar</v-btn>
                 </v-form>
               </v-card-text>
             </v-card>
@@ -44,17 +46,34 @@
 </template>
 <script>
 import { mapState } from "vuex";
+const fb = require("../firebaseConfig.js");
 export default {
   data() {
     return {
       drawer: false,
-      newGroupName: ''
+      newGroupName: "",
+      performingRequest: false
     };
   },
   computed: mapState(["groupList", "currentGroup"]),
   methods: {
     setCurrentGroup: function(groupChoosed) {
       this.$store.dispatch("setCurrentGroup", groupChoosed);
+    },
+    createNewGroup(){
+      this.performingRequest = true;
+      fb.db.collection("group")
+        .doc(this.newGroupName)
+        .set({})
+        .then(function() {
+          this.performingRequest =false;
+          console.log("Document successfully written!");
+        })
+        .catch(function(error) {
+          this.performingRequest =false;
+          alert("Error writing document: ", error);
+        });
+        
     }
   }
 };
