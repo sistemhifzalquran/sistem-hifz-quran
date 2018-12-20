@@ -17,6 +17,12 @@
           >
             <v-list-tile-title>{{group.name}}</v-list-tile-title>
           </v-list-tile>
+          <v-divider></v-divider>
+            <v-list-tile @click="addNewGroup()">
+              <v-list-tile-title>
+                Add New Group
+              </v-list-tile-title>
+            </v-list-tile>
         </v-list>
       </v-menu>
       <v-btn flat color="grey">
