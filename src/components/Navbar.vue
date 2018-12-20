@@ -19,7 +19,7 @@
           </v-list-tile>
           <v-divider></v-divider>
           <v-dialog max-width="600px">
-            <v-list-tile @click slot="activator">
+            <v-list-tile slot="activator">
               <v-list-tile-title>Tambah Group</v-list-tile-title>
             </v-list-tile>
             <v-card>
@@ -27,8 +27,14 @@
                 <h2>Group Baru</h2>
               </v-card-title>
               <v-card-text>
-                <v-form class="text-xs-right">
-                  <v-text-field prepend-icon="group_add" label="Group Name" v-model="newGroupName"></v-text-field>
+                <v-form class="text-xs-right" ref="formNewGroup">
+                  <v-text-field
+                    :rules="inputRulesNewGroup"
+                    prepend-icon="group_add"
+                    label="Group Name"
+                    v-model="newGroupName"
+                    maxlength="24"
+                  ></v-text-field>
                   <v-btn @click="createNewGroup" :loading="performingRequest ? true : false">Hantar</v-btn>
                 </v-form>
               </v-card-text>
@@ -52,7 +58,10 @@ export default {
     return {
       drawer: false,
       newGroupName: "",
-      performingRequest: false
+      performingRequest: false,
+      inputRulesNewGroup:[
+        v => (v.length >= 2 && v.length <= 24)|| "Masukkan Nama Group Baru,minima 2 huruf"
+      ]
     };
   },
   computed: mapState(["groupList", "currentGroup"]),
@@ -60,21 +69,23 @@ export default {
     setCurrentGroup: function(groupChoosed) {
       this.$store.dispatch("setCurrentGroup", groupChoosed);
     },
-    createNewGroup(){
+    createNewGroup() {
+      if (this.$refs.formNewGroup.validate()) {
       this.performingRequest = true;
-      fb.db.collection("group")
+      fb.db
+        .collection("group")
         .doc(this.newGroupName)
         .set({})
-        .then(function() {
-          this.performingRequest =false;
-          console.log("Document successfully written!");
+        .then(() => {
+          this.performingRequest = false;
+          (this.newGroupName = ""),
+            console.log("Document successfully written!");
         })
         .catch(function(error) {
-          this.performingRequest =false;
+          this.performingRequest = false;
           alert("Error writing document: ", error);
         });
-        
-    }
+    }},
   }
 };
 </script>
