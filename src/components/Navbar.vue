@@ -18,11 +18,20 @@
             <v-list-tile-title>{{group.name}}</v-list-tile-title>
           </v-list-tile>
           <v-divider></v-divider>
-            <v-list-tile @click="addNewGroup()">
-              <v-list-tile-title>
-                Add New Group
-              </v-list-tile-title>
+          <v-dialog max-width="600px">
+            <v-list-tile @click="" slot="activator">
+              <v-list-tile-title >Tambah Group</v-list-tile-title>
             </v-list-tile>
+            <v-card>
+              <v-card-title><h2>Group Baru</h2></v-card-title>
+              <v-card-text>
+                <v-form class="text-xs-right">
+                  <v-text-field prepend-icon="group_add" label="Group Name" v-model="newGroupName"></v-text-field>
+                  <v-btn>Hantar</v-btn>
+                </v-form>
+              </v-card-text>
+            </v-card>
+          </v-dialog>
         </v-list>
       </v-menu>
       <v-btn flat color="grey">
@@ -38,7 +47,8 @@ import { mapState } from "vuex";
 export default {
   data() {
     return {
-      drawer: false
+      drawer: false,
+      newGroupName: ''
     };
   },
   computed: mapState(["groupList", "currentGroup"]),
