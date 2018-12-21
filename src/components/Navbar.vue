@@ -79,7 +79,8 @@ export default {
         .doc(this.newGroupName)
         .set({})
         .then(() => {
-          this.performingRequest = false;
+          this.setCurrentGroup(this.newGroupName),
+          this.performingRequest = false,
           (this.newGroupName = ""),
           this.dialog = false,
           this.menu = false,
