@@ -4,7 +4,7 @@
       <v-toolbar-side-icon @click="drawer = !drawer"></v-toolbar-side-icon>
       <v-toolbar-title>Hifz AlQuran</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-menu offset-y>
+      <v-menu offset-y v-model="menu">
         <v-btn flat slot="activator" color="grey">
           <v-icon left>expand_more</v-icon>
           <span>{{currentGroup}}</span>
@@ -18,8 +18,8 @@
             <v-list-tile-title>{{group.name}}</v-list-tile-title>
           </v-list-tile>
           <v-divider></v-divider>
-          <v-dialog max-width="600px">
-            <v-list-tile slot="activator">
+          <v-dialog max-width="600px" v-model="dialog">
+            <v-list-tile  slot="activator">
               <v-list-tile-title>Tambah Group</v-list-tile-title>
             </v-list-tile>
             <v-card>
@@ -42,7 +42,7 @@
           </v-dialog>
         </v-list>
       </v-menu>
-      <v-btn flat color="grey">
+      <v-btn @click="logout()" flat color="grey">
         <span>Sign Out</span>
         <v-icon right>exit_to_app</v-icon>
       </v-btn>
@@ -56,6 +56,8 @@ const fb = require("../firebaseConfig.js");
 export default {
   data() {
     return {
+      menu: false,
+      dialog: false,
       drawer: false,
       newGroupName: "",
       performingRequest: false,
@@ -79,6 +81,8 @@ export default {
         .then(() => {
           this.performingRequest = false;
           (this.newGroupName = ""),
+          this.dialog = false,
+          this.menu = false,
             console.log("Document successfully written!");
         })
         .catch(function(error) {
@@ -86,6 +90,17 @@ export default {
           alert("Error writing document: ", error);
         });
     }},
+    logout() {
+      fb.auth
+        .signOut()
+        .then(() => {
+          this.$store.commit("resetState");
+          this.$router.push("/login");
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }
   }
 };
 </script>
