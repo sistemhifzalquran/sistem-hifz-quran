@@ -35,6 +35,7 @@
                     v-model="newGroupName"
                     maxlength="24"
                   ></v-text-field>
+                  
                   <v-btn @click="createNewGroup" :loading="performingRequest ? true : false">Hantar</v-btn>
                 </v-form>
               </v-card-text>
@@ -104,4 +105,6 @@ export default {
     }
   }
 };
+
+//todo:pastikan add new group validate dulu group yang ada,cuba guna code yg update supaya x delete file
 </script>

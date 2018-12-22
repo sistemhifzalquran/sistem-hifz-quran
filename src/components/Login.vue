@@ -83,7 +83,6 @@ export default {
           .then(user => {
             this.$store.commit("setCurrentUser", user.user);
             this.$store.dispatch("fetchUserProfile");
-            this.performingRequest = false;
             fb.usersCollection
               .doc(user.user.uid)
               .get()
