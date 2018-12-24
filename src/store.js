@@ -17,9 +17,20 @@ export default new Vuex.Store({
     setCurrentGroup: (state, payload) => {
       state.currentGroup = payload;
       fb.db
-          .collection("setting")
-          .doc("default")
-          .update({defaultGroup:payload})
+        .collection("setting")
+        .doc("default")
+        .update({ defaultGroup: payload })
+    },
+    fetchCurrentGroup: (state) => {
+      fb.db.collection('setting')
+        .doc('default')
+        .get()
+        .then(function (doc) {
+          state.currentGroup = doc.data().defaultGroup;
+        })
+        .catch(err => {
+          console.log(err);
+        });
     },
     setCurrentUser(state, val) {
       state.currentUser = val;
@@ -27,7 +38,7 @@ export default new Vuex.Store({
     setUserProfile(state, val) {
       state.userProfile = val;
     },
-    resetState (state) {
+    resetState(state) {
       // acquire initial state
       const s = initialState()
       Object.keys(s).forEach(key => {
@@ -50,17 +61,8 @@ export default new Vuex.Store({
           console.log(err);
         });
     },
-    fetchCurrentGroup({commit}) {
-      fb.db.collection('setting')
-        .doc('default')
-        .get()
-        .then(function(doc) {
-         commit('setCurrentGroup', doc.data().defaultGroup)
-          
-        })
-        .catch(err => {
-          console.log(err);
-        });
+    fetchCurrentGroup(context) {
+      context.commit('fetchCurrentGroup')
     }
   }
 })
