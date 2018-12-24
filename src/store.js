@@ -15,7 +15,6 @@ export default new Vuex.Store({
   state: initialState,
   mutations: {
     setCurrentGroup: (state, payload) => {
-
       fb.db
         .collection("setting")
         .doc("default")
@@ -26,7 +25,7 @@ export default new Vuex.Store({
           for (var i = state.groupList.length - 1; i >= 0; i--) {
             if (state.groupList[i] === payload) {
               state.groupList.splice(i, 1);
-              break;       //<-- Uncomment  if only the first term has to be removed
+              break;
             }
           }
           state.currentGroup = payload;
@@ -36,7 +35,6 @@ export default new Vuex.Store({
         });
     },
     fetchCurrentGroup: (state) => {
-
       fb.db.collection('setting')
         .doc('default')
         .get()
