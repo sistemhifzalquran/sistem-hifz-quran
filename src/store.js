@@ -15,19 +15,22 @@ export default new Vuex.Store({
   state: initialState,
   mutations: {
     setCurrentGroup: (state, payload) => {
-      var x = state.currentGroup;
-      state.groupList.push(x);
-      for (var i = state.groupList.length - 1; i >= 0; i--) {
-        if (state.groupList[i] === payload) {
-          state.groupList.splice(i, 1);
-          break;       //<-- Uncomment  if only the first term has to be removed
-        }
-      }
-      state.currentGroup = payload;
+
       fb.db
         .collection("setting")
         .doc("default")
         .update({ defaultGroup: payload })
+        .then(function () {
+          var x = state.currentGroup;
+          state.groupList.push(x);
+          for (var i = state.groupList.length - 1; i >= 0; i--) {
+            if (state.groupList[i] === payload) {
+              state.groupList.splice(i, 1);
+              break;       //<-- Uncomment  if only the first term has to be removed
+            }
+          }
+          state.currentGroup = payload;
+        })
         .catch(err => {
           console.log(err);
         });
