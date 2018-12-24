@@ -12,10 +12,10 @@
         <v-list>
           <v-list-tile
             v-for="group in groupList"
-            :key="group.name"
-            @click="setCurrentGroup(group.name)"
+            :key="group"
+            @click="setCurrentGroup(group)"
           >
-            <v-list-tile-title>{{group.name}}</v-list-tile-title>
+            <v-list-tile-title>{{group}}</v-list-tile-title>
           </v-list-tile>
           <v-divider></v-divider>
           <v-dialog max-width="600px" v-model="dialog">
