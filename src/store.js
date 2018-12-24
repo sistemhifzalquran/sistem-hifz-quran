@@ -5,8 +5,8 @@ const fb = require("@/firebaseConfig.js");
 Vue.use(Vuex)
 function initialState() {
   return {
-    groupList: [{ name: "2018" }, { name: "form 1 2018" }, { name: "2017" }, { name: "2019" }],
-    currentGroup: '2018',
+    groupList: [],
+    currentGroup: '',
     currentUser: null,
     userProfile: {}
   }
@@ -16,6 +16,10 @@ export default new Vuex.Store({
   mutations: {
     setCurrentGroup: (state, payload) => {
       state.currentGroup = payload;
+      fb.db
+          .collection("setting")
+          .doc("default")
+          .update({defaultGroup:payload})
     },
     setCurrentUser(state, val) {
       state.currentUser = val;
@@ -41,6 +45,18 @@ export default new Vuex.Store({
         .get()
         .then(res => {
           commit("setUserProfile", res.data());
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    fetchCurrentGroup({commit}) {
+      fb.db.collection('setting')
+        .doc('default')
+        .get()
+        .then(function(doc) {
+         commit('setCurrentGroup', doc.data().defaultGroup)
+          
         })
         .catch(err => {
           console.log(err);
