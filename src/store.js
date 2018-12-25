@@ -15,8 +15,10 @@ export default new Vuex.Store({
   state: initialState,
   mutations: {
     setCurrentGroup: (state, payload) => {
-      var x = state.currentGroup;
-      state.groupList.push(x);
+      if (state.currentGroup != '') {
+        var x = state.currentGroup;
+        state.groupList.push(x);
+      }
       for (var i = state.groupList.length - 1; i >= 0; i--) {
         if (state.groupList[i] === payload) {
           state.groupList.splice(i, 1);
@@ -25,10 +27,7 @@ export default new Vuex.Store({
       }
       state.currentGroup = payload;
     },
-    onCreatedCurrentGroup: (state,doc) => {
-      state.currentGroup = doc.data().defaultGroup;
-    },
-    onCreatedGroupList:(state,snapshot)=>{
+    onCreatedGroupList: (state, snapshot) => {
       snapshot.docs.forEach(doc => {
         if (state.currentGroup != doc.id) { state.groupList.push(doc.id) }
       })
@@ -77,12 +76,12 @@ export default new Vuex.Store({
         .doc('default')
         .get()
         .then(function (doc) {
-          context.commit("onCreatedCurrentGroup",doc)
+          context.commit("setCurrentGroup", doc.data().defaultGroup)
         }).then(function () {
           fb.db.collection('group')
             .get()
             .then((snapshot) => {
-              context.commit("onCreatedGroupList",snapshot)
+              context.commit("onCreatedGroupList", snapshot)
             })
         })
         .catch(err => {
