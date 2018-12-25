@@ -10,6 +10,9 @@ data(){
   return{
     
   }
-}
+},
+created() {
+    this.$store.dispatch("onCreatedData");
+  }
 };
 </script>

@@ -108,9 +108,6 @@ export default {
         
     }
   },
-  created() {
-    this.$store.dispatch("onCreatedData");
-  }
 };
 
 //todo:pastikan add new group validate dulu group yang ada,cuba guna code yg update supaya x delete file
