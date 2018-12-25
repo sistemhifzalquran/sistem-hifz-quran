@@ -25,26 +25,14 @@ export default new Vuex.Store({
       }
       state.currentGroup = payload;
     },
-    fetchCurrentGroup: (state) => {
-      fb.db.collection('setting')
-        .doc('default')
-        .get()
-        .then(function (doc) {
-          state.currentGroup = doc.data().defaultGroup;
-        }).then(function () {
-          fb.db.collection('group')
-            .get()
-            .then((snapshot) => {
+    onCreatedCurrentGroup: (state,doc) => {
+      state.currentGroup = doc.data().defaultGroup;
+    },
+    onCreatedGroupList:(state,snapshot)=>{
+      snapshot.docs.forEach(doc => {
+        if (state.currentGroup != doc.id) { state.groupList.push(doc.id) }
+      })
 
-              snapshot.docs.forEach(doc => {
-                if (state.currentGroup != doc.id) { state.groupList.push(doc.id) }
-              })
-
-            })
-        })
-        .catch(err => {
-          console.log(err);
-        });
     },
     setCurrentUser(state, val) {
       state.currentUser = val;
@@ -84,8 +72,22 @@ export default new Vuex.Store({
           console.log(err);
         });
     },
-    fetchCurrentGroup(context) {
-      context.commit('fetchCurrentGroup')
-    }
+    fetchCurrentGroup: (context) => {
+      fb.db.collection('setting')
+        .doc('default')
+        .get()
+        .then(function (doc) {
+          context.commit("onCreatedCurrentGroup",doc)
+        }).then(function () {
+          fb.db.collection('group')
+            .get()
+            .then((snapshot) => {
+              context.commit("onCreatedGroupList",snapshot)
+            })
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
   }
 })
