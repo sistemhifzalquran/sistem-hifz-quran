@@ -11,7 +11,8 @@ const config = {
   messagingSenderId: ""
 };
 firebase.initializeApp(config);
-//example
+
+firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION);
 // firebase utils
 const db = firebase.firestore();
 const auth = firebase.auth();
@@ -22,7 +23,7 @@ const settings = {
   timestampsInSnapshots: true
 };
 db.settings(settings);
-
+firebase.firestore().enablePersistence();
 // firebase collections
 const usersCollection = db.collection("users");
 
