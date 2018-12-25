@@ -15,24 +15,15 @@ export default new Vuex.Store({
   state: initialState,
   mutations: {
     setCurrentGroup: (state, payload) => {
-      fb.db
-        .collection("setting")
-        .doc("default")
-        .update({ defaultGroup: payload })
-        .then(function () {
-          var x = state.currentGroup;
-          state.groupList.push(x);
-          for (var i = state.groupList.length - 1; i >= 0; i--) {
-            if (state.groupList[i] === payload) {
-              state.groupList.splice(i, 1);
-              break;
-            }
-          }
-          state.currentGroup = payload;
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      var x = state.currentGroup;
+      state.groupList.push(x);
+      for (var i = state.groupList.length - 1; i >= 0; i--) {
+        if (state.groupList[i] === payload) {
+          state.groupList.splice(i, 1);
+          break;
+        }
+      }
+      state.currentGroup = payload;
     },
     fetchCurrentGroup: (state) => {
       fb.db.collection('setting')
@@ -71,7 +62,16 @@ export default new Vuex.Store({
   },
   actions: {
     setCurrentGroup: (context, payload) => {
-      context.commit('setCurrentGroup', payload)
+      fb.db
+        .collection("setting")
+        .doc("default")
+        .update({ defaultGroup: payload })
+        .then(function () {
+          context.commit('setCurrentGroup', payload);
+        })
+        .catch(err => {
+          console.log(err);
+        });
     },
     fetchUserProfile({ commit, state }) {
       fb.usersCollection

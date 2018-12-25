@@ -69,7 +69,7 @@ export default {
       ]
     };
   },
-  computed: mapState(["groupList", "currentGroup"]),
+  computed: {...mapState(["groupList", "currentGroup"])},
   methods: {
     setCurrentGroup: function(groupChoosed) {
       this.$store.dispatch("setCurrentGroup", groupChoosed);
