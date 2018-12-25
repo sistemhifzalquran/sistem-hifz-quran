@@ -13,7 +13,7 @@
           <v-list-tile
             v-for="group in groupList"
             :key="group"
-            @click="setCurrentGroup(group)"
+            @click="pickNewCurrentGroup(group)"
           >
             <v-list-tile-title>{{group}}</v-list-tile-title>
           </v-list-tile>
@@ -71,8 +71,8 @@ export default {
   },
   computed: {...mapState(["groupList", "currentGroup"])},
   methods: {
-    setCurrentGroup: function(groupChoosed) {
-      this.$store.dispatch("setCurrentGroup", groupChoosed);
+    pickNewCurrentGroup: function(groupChoosed) {
+      this.$store.dispatch("pickNewCurrentGroup", groupChoosed);
     },
     createNewGroup() {
       if (this.$refs.formNewGroup.validate()) {
@@ -82,7 +82,7 @@ export default {
           .doc(this.newGroupName)
           .set({})
           .then(() => {
-            this.setCurrentGroup(this.newGroupName),
+            this.pickNewCurrentGroup(this.newGroupName),
               (this.performingRequest = false),
               (this.newGroupName = ""),
               (this.dialog = false),
@@ -109,7 +109,7 @@ export default {
     }
   },
   created() {
-    this.$store.dispatch("fetchCurrentGroup");
+    this.$store.dispatch("onCreatedData");
   }
 };
 

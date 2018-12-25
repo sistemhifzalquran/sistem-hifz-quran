@@ -48,7 +48,7 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    setCurrentGroup: (context, payload) => {
+    pickNewCurrentGroup: (context, payload) => {
       fb.db
         .collection("setting")
         .doc("default")
@@ -71,7 +71,7 @@ export default new Vuex.Store({
           console.log(err);
         });
     },
-    fetchCurrentGroup: (context) => {
+    onCreatedData: (context) => {
       fb.db.collection('setting')
         .doc('default')
         .get()
