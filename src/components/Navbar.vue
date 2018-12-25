@@ -82,7 +82,7 @@ export default {
           .doc(this.newGroupName)
           .set({})
           .then(() => {
-            this.pickNewCurrentGroup(this.newGroupName),
+            this.$store.dispatch("pickNewCurrentGroup", this.newGroupName),
               (this.performingRequest = false),
               (this.newGroupName = ""),
               (this.dialog = false),
