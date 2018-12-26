@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <Navbar/>
-    <v-content>
+    <v-content >
       <News/>
     </v-content>
   </v-app>

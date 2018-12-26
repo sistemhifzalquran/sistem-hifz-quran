@@ -10,11 +10,7 @@
           <span>{{currentGroup}}</span>
         </v-btn>
         <v-list>
-          <v-list-tile
-            v-for="group in groupList"
-            :key="group"
-            @click="pickNewCurrentGroup(group)"
-          >
+          <v-list-tile v-for="group in groupList" :key="group" @click="pickNewCurrentGroup(group)">
             <v-list-tile-title>{{group}}</v-list-tile-title>
           </v-list-tile>
           <v-divider></v-divider>
@@ -69,7 +65,7 @@ export default {
       ]
     };
   },
-  computed: {...mapState(["groupList", "currentGroup"])},
+  computed: { ...mapState(["groupList", "currentGroup"]) },
   methods: {
     pickNewCurrentGroup: function(groupChoosed) {
       this.$store.dispatch("pickNewCurrentGroup", groupChoosed);
@@ -93,6 +89,16 @@ export default {
             this.performingRequest = false;
             alert("Error writing document: ", error);
           });
+        fb.db
+          .collection("setting")
+          .doc("news")
+          .collection("group")
+          .doc(this.newGroupName)
+          .set({ timeline: [""] })
+          .catch(function(error) {
+            this.performingRequest = false;
+            alert("Error writing document: ", error);
+          });
       }
     },
     logout() {
@@ -105,9 +111,8 @@ export default {
         .catch(err => {
           console.log(err);
         });
-        
     }
-  },
+  }
 };
 
 //todo:pastikan add new group validate dulu group yang ada,cuba guna code yg update supaya x delete file

@@ -6,6 +6,7 @@ Vue.use(Vuex)
 function initialState() {
   return {
     groupList: [],
+    newsList: [],
     currentGroup: '',
     currentUser: null,
     userProfile: {}
@@ -33,6 +34,9 @@ export default new Vuex.Store({
       })
 
     },
+    onCreatedNewsList: (state, snapshot) => {
+      state.newsList = snapshot;
+    },
     setCurrentUser(state, val) {
       state.currentUser = val;
     },
@@ -55,10 +59,22 @@ export default new Vuex.Store({
         .update({ defaultGroup: payload })
         .then(function () {
           context.commit('setCurrentGroup', payload);
-        })
+        }).then(
+          ()=>{
+            fb.db.collection('setting')
+            .doc('news')
+            .collection('group')
+            .doc(context.state.currentGroup)
+            .get()
+            .then(function (snapshot) {
+              context.commit("onCreatedNewsList", snapshot.data().timeline)
+            });
+          }
+        )
         .catch(err => {
           console.log(err);
         });
+        
     },
     fetchUserProfile({ commit, state }) {
       fb.usersCollection
@@ -82,11 +98,21 @@ export default new Vuex.Store({
             .get()
             .then((snapshot) => {
               context.commit("onCreatedGroupList", snapshot)
-            })
+            });
+          fb.db.collection('setting')
+            .doc('news')
+            .collection('group')
+            .doc(context.state.currentGroup)
+            .get()
+            .then(function (snapshot) {
+              context.commit("onCreatedNewsList", snapshot.data().timeline)
+            });
         })
         .catch(err => {
           console.log(err);
-        });
+        }
+        );
+
     },
   }
 })
