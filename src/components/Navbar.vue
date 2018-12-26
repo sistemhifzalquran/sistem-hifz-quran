@@ -94,7 +94,7 @@ export default {
           .doc("news")
           .collection("group")
           .doc(this.newGroupName)
-          .set({ timeline: [""] })
+          .set({ timeline: [] })
           .catch(function(error) {
             this.performingRequest = false;
             alert("Error writing document: ", error);
