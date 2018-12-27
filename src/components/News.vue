@@ -15,6 +15,8 @@
               ></v-textarea>
               <v-btn @click="addNews" :loading="performingRequest ? true : false">Hantar</v-btn>
             </v-form>
+            {{newsList}}{{currentNews}}
+            <v-btn @click="viewNews()" :loading="performingRequest ? true : false">Hantar</v-btn>
           </v-card-text>
         </v-card>
       </v-expansion-panel-content>
@@ -27,6 +29,7 @@ const fb = require("../firebaseConfig.js");
 export default {
   data() {
     return {
+      currentNews: [],
       addNewsContent: "",
       performingRequest: false,
       inputRulesAddNews: [
@@ -34,14 +37,25 @@ export default {
       ]
     };
   },
-  computed: { ...mapState(["newsList", "currentGroup"]) },
+  computed: {
+    
+    ...mapState(["newsList", "currentGroup"])
+  },
   methods: {
+    viewNews(){
+      var x = this.newsList.slice(this.newsList.length - 3,this.newsList.length);
+      x.forEach(id => {
+        fb.db.collection("news").doc(id).get().then(doc=>{
+          this.currentNews.push(doc.data());
+        });
+      });
+    },
     addNews() {
       if (this.$refs.addNewsForm.validate()) {
         this.performingRequest = true;
         fb.db
           .collection("news")
-          .add({ content: this.addNewsContent })
+          .add({ content: this.addNewsContent, dateCreated: new Date() })
           .then(doc => {
             console.log(doc.id);
             this.$store.state.newsList.push(doc.id);
@@ -55,13 +69,12 @@ export default {
           .then(() => {
             this.performingRequest = false;
             this.addNewsContent = "";
-
           })
           .catch(function(error) {
             console.log("Error writing document: ", error);
           });
       }
     }
-  }
+  },
 };
 </script>
