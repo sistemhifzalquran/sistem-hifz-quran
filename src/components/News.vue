@@ -15,8 +15,14 @@
               ></v-textarea>
               <v-btn @click="addNews" :loading="performingRequest ? true : false">Hantar</v-btn>
             </v-form>
-            {{newsList}}{{currentNews}}
-            <v-btn @click="viewNews()" :loading="performingRequest ? true : false">Hantar</v-btn>
+            <v-card flat v-for="news in currentNews" :key="news.key">
+              {{news.content}}
+              {{news.dateCreated}}
+            </v-card>
+            <v-btn
+              @click="viewNews()"
+              :loading="performingRequest ? true : false"
+            >Lihat Pengumuman Lepas</v-btn>
           </v-card-text>
         </v-card>
       </v-expansion-panel-content>
@@ -38,16 +44,28 @@ export default {
     };
   },
   computed: {
-    
     ...mapState(["newsList", "currentGroup"])
   },
   methods: {
-    viewNews(){
-      var x = this.newsList.slice(this.newsList.length - 3,this.newsList.length);
+    viewNews() {
+      var x = this.newsList.slice(
+        this.newsList.length - 3,
+        this.newsList.length
+      );
       x.forEach(id => {
-        fb.db.collection("news").doc(id).get().then(doc=>{
-          this.currentNews.push(doc.data());
-        });
+        fb.db
+          .collection("news")
+          .doc(id)
+          .get()
+          .then(doc => {
+            var xx = doc.data().dateCreated.toDate();
+            var yy = doc.data().content;
+            this.currentNews.push({
+              dateCreated: xx.toLocaleString(),
+              content: yy,
+              key: doc.id
+            });
+          });
       });
     },
     addNews() {
@@ -57,7 +75,6 @@ export default {
           .collection("news")
           .add({ content: this.addNewsContent, dateCreated: new Date() })
           .then(doc => {
-            console.log(doc.id);
             this.$store.state.newsList.push(doc.id);
             fb.db
               .collection("setting")
@@ -75,6 +92,6 @@ export default {
           });
       }
     }
-  },
+  }
 };
 </script>
