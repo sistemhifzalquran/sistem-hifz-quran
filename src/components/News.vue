@@ -18,13 +18,12 @@
             <v-card flat v-for="news in currentNews" :key="news.key">
               {{news.content}}
               {{news.dateCreated}}
-              {{news.key}}
             </v-card>
             <v-btn
               :disabled="noMoreNews"
               @click="viewNews()"
               :loading="performingRequestNews ? true : false"
-            >{{pengumuman}} {{loadedNews}}</v-btn>
+            >{{pengumuman}}</v-btn>
           </v-card-text>
         </v-card>
       </v-expansion-panel-content>
