@@ -40,7 +40,7 @@
         </v-list>
       </v-menu>
       <v-btn @click="logout()" flat color="grey">
-        <span class="hidden-sm-and-down" >Keluar</span>
+        <span class="hidden-sm-and-down">Keluar</span>
         <v-icon right>exit_to_app</v-icon>
       </v-btn>
     </v-toolbar>
@@ -68,7 +68,9 @@ export default {
   computed: { ...mapState(["groupList", "currentGroup"]) },
   methods: {
     pickNewCurrentGroup: function(groupChoosed) {
-      this.$store.dispatch("pickNewCurrentGroup", groupChoosed);
+      this.$store.dispatch("pickNewCurrentGroup", groupChoosed).then();
+
+      this.$emit("increment");
     },
     createNewGroup() {
       if (this.$refs.formNewGroup.validate()) {
@@ -99,6 +101,7 @@ export default {
             this.performingRequest = false;
             alert("Error writing document: ", error);
           });
+        this.$emit("increment");
       }
     },
     logout() {

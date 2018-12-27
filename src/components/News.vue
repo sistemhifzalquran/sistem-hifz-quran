@@ -18,11 +18,13 @@
             <v-card flat v-for="news in currentNews" :key="news.key">
               {{news.content}}
               {{news.dateCreated}}
+              {{news.key}}
             </v-card>
             <v-btn
+              :disabled="noMoreNews"
               @click="viewNews()"
-              :loading="performingRequest ? true : false"
-            >Lihat Pengumuman Lepas {{loadedNews}}</v-btn>
+              :loading="performingRequestNews ? true : false"
+            >{{pengumuman}} {{loadedNews}}</v-btn>
           </v-card-text>
         </v-card>
       </v-expansion-panel-content>
@@ -35,10 +37,13 @@ const fb = require("../firebaseConfig.js");
 export default {
   data() {
     return {
-      loadedNews: 0,
+      pengumuman: "Lihat Pengumuman Lepas",
+      loadedNews: 1,
       currentNews: [],
       addNewsContent: "",
       performingRequest: false,
+      performingRequestNews: false,
+      noMoreNews: false,
       inputRulesAddNews: [
         v => (v.length >= 2 && v.length <= 100) || "minima 2 huruf"
       ]
@@ -49,16 +54,17 @@ export default {
   },
   methods: {
     viewNews() {
-      var x = this.newsList.slice(
-        this.newsList.length - (this.loadedNews + 3),
-        this.newsList.length - this.loadedNews
-      );
-      x.slice().reverse().forEach(id => {
+      var xy = this.newsList.length - this.loadedNews;
+      var x = this.newsList[xy];
+
+      if (xy >= 0) {
+        this.performingRequestNews = true;
         fb.db
           .collection("news")
-          .doc(id)
+          .doc(x)
           .get()
           .then(doc => {
+            console.log(x);
             var xx = doc.data().dateCreated.toDate();
             var yy = doc.data().content;
             this.currentNews.push({
@@ -66,10 +72,14 @@ export default {
               content: yy,
               key: doc.id
             });
+            this.performingRequestNews = false;
+            this.loadedNews += 1;
           });
-          this.loadedNews += 1;
-      });
-      
+      } else {
+        console.log("no more news");
+        this.noMoreNews = true;
+        this.pengumuman = "Tiada Lagi Pengumuman";
+      }
     },
     addNews() {
       if (this.$refs.addNewsForm.validate()) {

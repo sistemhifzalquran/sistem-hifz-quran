@@ -1,8 +1,8 @@
 <template>
   <v-app>
-    <Navbar/>
-    <v-content >
-      <News/>
+    <Navbar v-on:increment="renderNews"/>
+    <v-content>
+      <News :key="total"/>
     </v-content>
   </v-app>
 </template>
@@ -13,7 +13,12 @@ import News from "@/components/News";
 export default {
   components: { Navbar, News },
   data() {
-    return {};
+    return { total: 0 };
+  },
+  methods: {
+    renderNews: function() {
+      this.total += 1;
+    }
   },
   created() {
     this.$store.dispatch("onCreatedData");
