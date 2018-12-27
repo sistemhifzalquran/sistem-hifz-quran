@@ -22,7 +22,7 @@
             <v-btn
               @click="viewNews()"
               :loading="performingRequest ? true : false"
-            >Lihat Pengumuman Lepas</v-btn>
+            >Lihat Pengumuman Lepas {{loadedNews}}</v-btn>
           </v-card-text>
         </v-card>
       </v-expansion-panel-content>
@@ -35,6 +35,7 @@ const fb = require("../firebaseConfig.js");
 export default {
   data() {
     return {
+      loadedNews: 0,
       currentNews: [],
       addNewsContent: "",
       performingRequest: false,
@@ -49,10 +50,10 @@ export default {
   methods: {
     viewNews() {
       var x = this.newsList.slice(
-        this.newsList.length - 3,
-        this.newsList.length
+        this.newsList.length - (this.loadedNews + 3),
+        this.newsList.length - this.loadedNews
       );
-      x.forEach(id => {
+      x.slice().reverse().forEach(id => {
         fb.db
           .collection("news")
           .doc(id)
@@ -66,7 +67,9 @@ export default {
               key: doc.id
             });
           });
+          this.loadedNews += 1;
       });
+      
     },
     addNews() {
       if (this.$refs.addNewsForm.validate()) {
