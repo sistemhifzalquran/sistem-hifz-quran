@@ -2,7 +2,7 @@
   <nav>
     <v-toolbar app>
       <v-toolbar-side-icon @click="drawer = !drawer"></v-toolbar-side-icon>
-      <v-toolbar-title>Hifz AlQuran</v-toolbar-title>
+      <v-toolbar-title class="hidden-sm-and-down">Hifz AlQuran</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-menu offset-y v-model="menu">
         <v-btn flat slot="activator" color="grey">
@@ -27,7 +27,7 @@
                   <v-text-field
                     :rules="inputRulesNewGroup"
                     prepend-icon="group_add"
-                    label="Group Name"
+                    label="Nama Group"
                     v-model="newGroupName"
                     maxlength="24"
                   ></v-text-field>
@@ -40,7 +40,7 @@
         </v-list>
       </v-menu>
       <v-btn @click="logout()" flat color="grey">
-        <span>Sign Out</span>
+        <span class="hidden-sm-and-down" >Keluar</span>
         <v-icon right>exit_to_app</v-icon>
       </v-btn>
     </v-toolbar>
