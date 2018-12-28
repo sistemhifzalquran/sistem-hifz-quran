@@ -2,7 +2,7 @@
   <v-container align-content-center>
     <v-expansion-panel popout>
       <v-expansion-panel-content>
-        <div slot="header"><h1>Pengumuman</h1></div>
+        <div slot="header"><h2>Pengumuman</h2></div>
         <v-card>
           <v-card-text>
             <v-form ref="addNewsForm" class="text-xs-right">
