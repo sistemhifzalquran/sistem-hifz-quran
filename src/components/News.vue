@@ -11,7 +11,7 @@
                 v-model="addNewsContent"
                 label="Enter Post Here"
                 :rules="inputRulesAddNews"
-                maxlength="100"
+                maxlength="1000"
               ></v-textarea>
               <v-btn @click="addNews" :loading="performingRequest ? true : false">Hantar</v-btn>
             </v-form>
@@ -44,7 +44,7 @@ export default {
       performingRequestNews: false,
       noMoreNews: false,
       inputRulesAddNews: [
-        v => (v.length >= 2 && v.length <= 100) || "minima 2 huruf"
+        v => (v.length >= 2 && v.length <= 1000) || "minima 2 huruf"
       ]
     };
   },
