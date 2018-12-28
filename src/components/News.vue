@@ -56,17 +56,13 @@ export default {
   },
   methods: {
     viewNews() {
-      var xy = this.newsList.length - this.loadedNews;
-      var x = this.newsList[xy];
-
-      if (xy >= 0) {
+      if (this.newsList.length - this.loadedNews >= 0) {
         this.performingRequestNews = true;
         fb.db
           .collection("news")
-          .doc(x)
+          .doc(this.newsList[this.newsList.length - this.loadedNews])
           .get()
           .then(doc => {
-            console.log(x);
             var xx = doc.data().dateCreated.toDate();
             var yy = doc.data().content;
             this.currentNews.push({
