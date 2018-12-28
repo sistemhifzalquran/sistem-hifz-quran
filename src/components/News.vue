@@ -40,7 +40,7 @@ export default {
   data() {
     return {
       pengumuman: "Lihat Pengumuman Lepas",
-      loadedNews: 1,
+      loadedNews: 0,
       currentNews: [],
       addNewsContent: "",
       performingRequest: false,
@@ -56,6 +56,36 @@ export default {
   },
   methods: {
     viewNews() {
+      var xy = this.newsList.length - (this.loadedNews + 5);
+      if (xy < 0) {
+        xy = 0;
+      }
+      var x = this.newsList.slice(xy, this.newsList.length - this.loadedNews);
+      x.slice()
+        .reverse()
+        .forEach(id => {
+          fb.db
+            .collection("news")
+            .doc(id)
+            .get()
+            .then(doc => {
+              var xx = doc.data().dateCreated.toDate();
+              var yy = doc.data().content;
+              this.currentNews.push({
+                dateCreated: xx.toLocaleString(),
+                content: yy,
+                key: doc.id
+              });
+              this.loadedNews += 1;
+              if (this.newsList.length - this.loadedNews <= 0) {
+                this.noMoreNews = true;
+                this.pengumuman = "Tiada Lagi Pengumuman";
+              }
+            });
+          
+        });
+
+      /* 
       if (this.newsList.length - this.loadedNews >= 0) {
         this.performingRequestNews = true;
         fb.db
@@ -77,7 +107,7 @@ export default {
         console.log("no more news");
         this.noMoreNews = true;
         this.pengumuman = "Tiada Lagi Pengumuman";
-      }
+      } */
     },
     addNews() {
       if (this.$refs.addNewsForm.validate()) {
