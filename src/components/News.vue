@@ -9,17 +9,19 @@
           <v-card-text>
             <v-form ref="addNewsForm" class="text-xs-right">
               <v-textarea
+                :key="newscontentText"
                 solo
                 v-model="addNewsContent"
                 label="Enter Post Here"
                 :rules="inputRulesAddNews"
                 maxlength="1000"
               ></v-textarea>
-              <v-btn @click="addNews" :loading="performingRequest ? true : false">Hantar</v-btn>
+              <v-btn @click="addNews" :loading="performingRequestAddNews ? true : false">Hantar</v-btn>
             </v-form>
             <v-card flat v-for="news in currentNews" :key="news.key">
               <v-card-title class="lighten-2 grey--text text--darken-1 py-0">{{news.dateCreated}}</v-card-title>
               <v-card-text class="py-1">{{news.content}}</v-card-text>
+              <v-card-text class="py-1">{{news.key}}</v-card-text>
               <v-divider class="pa-2"></v-divider>
             </v-card>
             <v-btn
@@ -39,11 +41,12 @@ const fb = require("../firebaseConfig.js");
 export default {
   data() {
     return {
+      newscontentText: 0,
       pengumuman: "Lihat Pengumuman Lepas",
       loadedNews: 0,
       currentNews: [],
       addNewsContent: "",
-      performingRequest: false,
+      performingRequestAddNews: false,
       performingRequestNews: false,
       noMoreNews: false,
       inputRulesAddNews: [
@@ -56,6 +59,7 @@ export default {
   },
   methods: {
     viewNews() {
+
       var xy = this.newsList.length - (this.loadedNews + 5);
       if (xy < 0) {
         xy = 0;
@@ -82,41 +86,18 @@ export default {
                 this.pengumuman = "Tiada Lagi Pengumuman";
               }
             });
-          
         });
-
-      /* 
-      if (this.newsList.length - this.loadedNews >= 0) {
-        this.performingRequestNews = true;
-        fb.db
-          .collection("news")
-          .doc(this.newsList[this.newsList.length - this.loadedNews])
-          .get()
-          .then(doc => {
-            var xx = doc.data().dateCreated.toDate();
-            var yy = doc.data().content;
-            this.currentNews.push({
-              dateCreated: xx.toLocaleString(),
-              content: yy,
-              key: doc.id
-            });
-            this.performingRequestNews = false;
-            this.loadedNews += 1;
-          });
-      } else {
-        console.log("no more news");
-        this.noMoreNews = true;
-        this.pengumuman = "Tiada Lagi Pengumuman";
-      } */
     },
     addNews() {
       if (this.$refs.addNewsForm.validate()) {
-        this.performingRequest = true;
+        this.performingRequestAddNews = true;
+        var date = new Date();
         fb.db
           .collection("news")
-          .add({ content: this.addNewsContent, dateCreated: new Date() })
+          .add({ content: this.addNewsContent, dateCreated: date })
           .then(doc => {
             this.$store.state.newsList.push(doc.id);
+            console.log(doc.id);
             fb.db
               .collection("setting")
               .doc("news")
@@ -125,8 +106,17 @@ export default {
               .update({ timeline: this.$store.state.newsList });
           })
           .then(() => {
-            this.performingRequest = false;
+            this.currentNews.unshift({
+              dateCreated: date.toLocaleString(),
+              content: this.addNewsContent,
+              key: this.$store.state.newsList[
+                this.$store.state.newsList.length - 1
+              ]
+            });
+            this.loadedNews += 1;
+            this.performingRequestAddNews = false;
             this.addNewsContent = "";
+            this.newscontentText += 1;
           })
           .catch(function(error) {
             console.log("Error writing document: ", error);
