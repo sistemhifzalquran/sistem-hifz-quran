@@ -58,7 +58,7 @@ export default {
   },
   methods: {
     viewNews() {
-
+      this.performingRequestNews = true;
       var xy = this.newsList.length - (this.loadedNews + 5);
       if (xy < 0) {
         xy = 0;
@@ -80,6 +80,7 @@ export default {
                 key: doc.id
               });
               this.loadedNews += 1;
+              this.performingRequestNews = false;
               if (this.newsList.length - this.loadedNews <= 0) {
                 this.noMoreNews = true;
                 this.pengumuman = "Tiada Lagi Pengumuman";
