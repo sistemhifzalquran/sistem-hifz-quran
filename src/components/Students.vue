@@ -5,6 +5,13 @@
         <div slot="header">
           <h2>Pelajar</h2>
         </div>
+        <v-expansion-panel v-for="student in studentDataList" popout :key="student.ic">
+          <v-expansion-panel-content>
+            <div slot="header">
+              <h2>{{student.name}}</h2>
+            </div>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
       </v-expansion-panel-content>
     </v-expansion-panel>
   </v-container>
@@ -17,7 +24,7 @@ export default {
     return {};
   },
   computed: {
-    ...mapState(["currentGroup"])
+    ...mapState(["studentDataList", "currentGroup"])
   },
   methods: {}
 };
