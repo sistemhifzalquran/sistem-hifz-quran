@@ -7,6 +7,8 @@ function initialState() {
   return {
     groupList: [],
     newsList: [],
+    studentList: [],
+    studentDataList: [],
     currentGroup: '',
     currentUser: null,
     userProfile: {}
@@ -37,6 +39,16 @@ export default new Vuex.Store({
     onCreatedNewsList: (state, snapshot) => {
       state.newsList = snapshot;
     },
+    onCreatedStudentList: (state, snapshot) => {
+      state.studentList = snapshot;
+    },
+    onCreatedStudentDataList: (state, doc) => {
+      state.studentDataList.push({
+        ic: doc.data().ic,
+        name: doc.data().name,
+        key: doc.id
+      });
+    },
     setCurrentUser(state, val) {
       state.currentUser = val;
     },
@@ -60,21 +72,20 @@ export default new Vuex.Store({
         .then(function () {
           context.commit('setCurrentGroup', payload);
         }).then(
-          ()=>{
-            fb.db.collection('setting')
-            .doc('news')
-            .collection('group')
-            .doc(context.state.currentGroup)
-            .get()
-            .then(function (snapshot) {
-              context.commit("onCreatedNewsList", snapshot.data().timeline)
-            });
+          () => {
+            fb.db
+              .collection('group')
+              .doc(context.state.currentGroup)
+              .get()
+              .then(function (snapshot) {
+                context.commit("onCreatedNewsList", snapshot.data().timeline)
+              });
           }
         )
         .catch(err => {
           console.log(err);
         });
-        
+
     },
     fetchUserProfile({ commit, state }) {
       fb.usersCollection
@@ -99,13 +110,27 @@ export default new Vuex.Store({
             .then((snapshot) => {
               context.commit("onCreatedGroupList", snapshot)
             });
-          fb.db.collection('setting')
-            .doc('news')
+          fb.db
             .collection('group')
             .doc(context.state.currentGroup)
             .get()
             .then(function (snapshot) {
               context.commit("onCreatedNewsList", snapshot.data().timeline)
+              context.commit("onCreatedStudentList", snapshot.data().students)
+              snapshot.data().students.forEach(id => {
+                if (id != "") {
+                  fb.db
+                    .collection("users")
+                    .doc(id)
+                    .get()
+                    .then(doc => {
+                      context.commit("onCreatedStudentDataList", doc)
+                    });
+                }
+              }
+
+              )
+
             });
         })
         .catch(err => {

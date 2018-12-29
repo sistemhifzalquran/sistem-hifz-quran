@@ -78,7 +78,7 @@ export default {
         fb.db
           .collection("group")
           .doc(this.newGroupName)
-          .set({})
+          .set({ timeline: [], students: [] })
           .then(() => {
             this.$store.dispatch("pickNewCurrentGroup", this.newGroupName),
               (this.performingRequest = false),
@@ -87,16 +87,6 @@ export default {
               (this.menu = false),
               console.log("Document successfully written!");
           })
-          .catch(function(error) {
-            this.performingRequest = false;
-            alert("Error writing document: ", error);
-          });
-        fb.db
-          .collection("setting")
-          .doc("news")
-          .collection("group")
-          .doc(this.newGroupName)
-          .set({ timeline: [] })
           .catch(function(error) {
             this.performingRequest = false;
             alert("Error writing document: ", error);
