@@ -12,11 +12,16 @@
                 :key="newscontentText"
                 solo
                 v-model="addNewsContent"
-                label="Enter Post Here"
+                label="Masukkan Pengumuman Disini"
                 :rules="inputRulesAddNews"
                 maxlength="1000"
               ></v-textarea>
-              <v-btn @click="addNews" :loading="performingRequestAddNews ? true : false">Hantar</v-btn>
+              <v-btn
+                flat
+                class="success mx-0 mt-3"
+                @click="addNews"
+                :loading="performingRequestAddNews ? true : false"
+              >Hantar</v-btn>
             </v-form>
             <v-card flat v-for="news in currentNews" :key="news.key">
               <v-card-title class="lighten-2 grey--text text--darken-1 py-0">{{news.dateCreated}}</v-card-title>
