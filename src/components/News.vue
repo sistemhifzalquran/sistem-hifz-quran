@@ -21,7 +21,6 @@
             <v-card flat v-for="news in currentNews" :key="news.key">
               <v-card-title class="lighten-2 grey--text text--darken-1 py-0">{{news.dateCreated}}</v-card-title>
               <v-card-text class="py-1">{{news.content}}</v-card-text>
-              <v-card-text class="py-1">{{news.key}}</v-card-text>
               <v-divider class="pa-2"></v-divider>
             </v-card>
             <v-btn
@@ -97,7 +96,6 @@ export default {
           .add({ content: this.addNewsContent, dateCreated: date })
           .then(doc => {
             this.$store.state.newsList.push(doc.id);
-            console.log(doc.id);
             fb.db
               .collection("setting")
               .doc("news")
