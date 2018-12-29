@@ -59,6 +59,12 @@ export default {
   methods: {
     viewNews() {
       this.performingRequestNews = true;
+      if (this.newsList.length == 0) {
+        this.noMoreNews = true;
+        this.pengumuman = "Tiada Lagi Pengumuman";
+        this.performingRequestNews = false;
+      }
+
       var xy = this.newsList.length - (this.loadedNews + 5);
       if (xy < 0) {
         xy = 0;
