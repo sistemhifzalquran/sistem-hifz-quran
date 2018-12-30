@@ -2,7 +2,7 @@
   <v-container align-content-center>
     <v-expansion-panel flat v-for="student in studentDataList" popout :key="student.ic">
       <v-expansion-panel-content>
-        <v-layout slot="header" row wrap class="pa-3">
+        <v-layout slot="header" row wrap class="pa-1">
           <v-flex xs12 md6>
             <div class="caption grey--text">Nama Pelajar</div>
             <div>{{student.name}}</div>
