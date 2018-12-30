@@ -3,7 +3,7 @@
     <Navbar v-on:increment="renderNews"/>
     <v-content>
       <News :key="total"/>
-      <Students :key="total+99"/>
+      <Students :key="total2"/>
     </v-content>
   </v-app>
 </template>
@@ -15,11 +15,12 @@ import Students from "@/components/Students";
 export default {
   components: { Navbar, News, Students },
   data() {
-    return { total: 0 };
+    return { total: 0 ,total2: 99};
   },
   methods: {
     renderNews: function() {
       this.total += 1;
+      this.total2 += 1;
     }
   },
   created() {

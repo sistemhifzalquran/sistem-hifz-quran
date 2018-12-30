@@ -11,7 +11,8 @@ function initialState() {
     studentDataList: [],
     currentGroup: '',
     currentUser: null,
-    userProfile: {}
+    userProfile: {},
+    noStudent: true,
   }
 }
 export default new Vuex.Store({
@@ -78,7 +79,22 @@ export default new Vuex.Store({
               .doc(context.state.currentGroup)
               .get()
               .then(function (snapshot) {
+                context.state.noStudent = true;
+                context.state.studentDataList = [];
                 context.commit("onCreatedNewsList", snapshot.data().timeline)
+                context.commit("onCreatedStudentList", snapshot.data().students)
+                snapshot.data().students.forEach(id => {
+                  if (id != "") {
+                    context.state.noStudent = false;
+                    fb.db
+                      .collection("users")
+                      .doc(id)
+                      .get()
+                      .then(doc => {
+                        context.commit("onCreatedStudentDataList", doc)
+                      });
+                  }
+                })
               });
           }
         )

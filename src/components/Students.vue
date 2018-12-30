@@ -22,6 +22,7 @@
         </v-layout>
       </v-expansion-panel-content>
     </v-expansion-panel>
+    <v-card v-if="noStudent" flat class="warning">Kumpulan ini tidak memiliki pelajar</v-card>
   </v-container>
 </template>
 <script>
@@ -32,7 +33,7 @@ export default {
     return {};
   },
   computed: {
-    ...mapState(["studentDataList", "currentGroup"])
+    ...mapState(["studentDataList", "currentGroup", "noStudent"])
   },
   methods: {}
 };

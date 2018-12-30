@@ -1,5 +1,9 @@
 <template>
   <nav>
+    <v-snackbar v-model="snack" :timeout="4000" top color="success">
+      <span>{{snackMsg}}</span>
+      <v-btn color="white" flat @click="snack = false">Close</v-btn>
+    </v-snackbar>
     <v-toolbar app>
       <v-toolbar-side-icon @click="drawer = !drawer"></v-toolbar-side-icon>
       <v-toolbar-title class="hidden-sm-and-down">Hifz AlQuran</v-toolbar-title>
@@ -53,6 +57,7 @@ const fb = require("../firebaseConfig.js");
 export default {
   data() {
     return {
+      snack: false,
       menu: false,
       dialog: false,
       drawer: false,
@@ -68,9 +73,9 @@ export default {
   computed: { ...mapState(["groupList", "currentGroup"]) },
   methods: {
     pickNewCurrentGroup: function(groupChoosed) {
-      this.$store.dispatch("pickNewCurrentGroup", groupChoosed).then();
-
-      this.$emit("increment");
+      this.$store.dispatch("pickNewCurrentGroup", groupChoosed).then(() => {
+        this.$emit("increment");
+      });
     },
     createNewGroup() {
       if (this.$refs.formNewGroup.validate()) {
@@ -86,12 +91,12 @@ export default {
               (this.dialog = false),
               (this.menu = false),
               console.log("Document successfully written!");
+            this.$emit("increment");
           })
           .catch(function(error) {
             this.performingRequest = false;
             alert("Error writing document: ", error);
           });
-        this.$emit("increment");
       }
     },
     logout() {
