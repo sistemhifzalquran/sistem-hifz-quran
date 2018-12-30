@@ -3,10 +3,10 @@
     <v-expansion-panel popout>
       <v-expansion-panel-content>
         <div slot="header">
-          <h2>Pengumuman</h2>
+          <h2 class="font-weight-regular">Pengumuman</h2>
         </div>
         <v-card>
-          <v-card-text>
+          <v-card-text class="text-xs-center">
             <v-form ref="addNewsForm" class="text-xs-right">
               <v-textarea
                 :key="newscontentText"
@@ -23,7 +23,8 @@
                 :loading="performingRequestAddNews ? true : false"
               >Hantar</v-btn>
             </v-form>
-            <v-card flat v-for="news in currentNews" :key="news.key">
+            <v-divider class="pa-3"></v-divider>
+            <v-card class="text-xs-left" flat v-for="news in currentNews" :key="news.key">
               <v-card-title class="lighten-2 grey--text text--darken-1 py-0">{{news.dateCreated}}</v-card-title>
               <v-card-text class="py-1 headline">{{news.content}}</v-card-text>
               <v-divider class="pa-2"></v-divider>

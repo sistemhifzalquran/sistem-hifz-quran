@@ -44,7 +44,19 @@ export default new Vuex.Store({
       state.studentList = snapshot;
     },
     onCreatedStudentDataList: (state, doc) => {
+      var x = '';
+      if(doc.data().mark <= 40){
+        x = 'critical'
+      }else if(doc.data().mark <= 60){
+        x = 'normal'
+      }else if(doc.data().mark <= 80){
+        x = 'good'
+      }else if(doc.data().mark <= 100){
+        x = 'excel'
+      }
       state.studentDataList.push({
+        status: x,
+        mark: doc.data().mark,
         ic: doc.data().ic,
         name: doc.data().name,
         key: doc.id

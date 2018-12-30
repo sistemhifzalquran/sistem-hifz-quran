@@ -1,8 +1,7 @@
 <template>
   <nav>
-    <v-snackbar v-model="snack" :timeout="4000" top color="success">
+    <v-snackbar v-model="snack" :timeout="1500" top color="success">
       <span>{{snackMsg}}</span>
-      <v-btn color="white" flat @click="snack = false">Close</v-btn>
     </v-snackbar>
     <v-toolbar app>
       <v-toolbar-side-icon @click="drawer = !drawer"></v-toolbar-side-icon>
@@ -58,6 +57,7 @@ export default {
   data() {
     return {
       snack: false,
+      snackMsg: "",
       menu: false,
       dialog: false,
       drawer: false,
@@ -75,11 +75,14 @@ export default {
     pickNewCurrentGroup: function(groupChoosed) {
       this.$store.dispatch("pickNewCurrentGroup", groupChoosed).then(() => {
         this.$emit("increment");
+        this.snackMsg = "kumpulan ditukar ke " + groupChoosed;
+        this.snack = true;
       });
     },
     createNewGroup() {
       if (this.$refs.formNewGroup.validate()) {
         this.performingRequest = true;
+        var x = this.newGroupName;
         fb.db
           .collection("group")
           .doc(this.newGroupName)
@@ -90,8 +93,10 @@ export default {
               (this.newGroupName = ""),
               (this.dialog = false),
               (this.menu = false),
-              console.log("Document successfully written!");
-            this.$emit("increment");
+              this.$emit("increment");
+            this.snackMsg = "Selamat Datang Ke " + x;
+            this.snack = true;
+            console.log("Document successfully written!");
           })
           .catch(function(error) {
             this.performingRequest = false;
