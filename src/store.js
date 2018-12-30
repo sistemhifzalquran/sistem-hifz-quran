@@ -134,6 +134,7 @@ export default new Vuex.Store({
               context.commit("onCreatedNewsList", snapshot.data().timeline)
               context.commit("onCreatedStudentList", snapshot.data().students)
               snapshot.data().students.forEach(id => {
+                context.state.noStudent = false;
                 if (id != "") {
                   fb.db
                     .collection("users")
