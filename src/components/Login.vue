@@ -6,8 +6,13 @@
           <v-flex xs12 sm8 md4>
             <v-card class="elevation-12">
               <v-toolbar dark color="primary">
-                <v-toolbar-title>Hifz AlQuran</v-toolbar-title>
+                <v-toolbar-title >Hifz AlQuran</v-toolbar-title>
               </v-toolbar>
+              <v-img
+                src="https://firebasestorage.googleapis.com/v0/b/sistem-hifz-quran.appspot.com/o/WhatsApp%20Image%202019-01-02%20at%2020.50.24.jpeg?alt=media&token=59027e6d-8d6d-4a72-8736-634a695cbd3e"
+                aspect-ratio="1"
+                class="grey lighten-2"
+              ></v-img>
               <v-card-text>
                 <v-form ref="form">
                   <v-text-field
@@ -94,14 +99,14 @@ export default {
                   console.log("go to gogogogo");
                   return false;
                 }
-              }).then(x =>{
-            if(x == true){
-              this.$router.push({ name: "Admin" });
-            }else{
-              this.$router.push({ name: "Dashboard" });
-
-            }
-          });
+              })
+              .then(x => {
+                if (x == true) {
+                  this.$router.push({ name: "Admin" });
+                } else {
+                  this.$router.push({ name: "Dashboard" });
+                }
+              });
           })
           .catch(err => {
             console.log(err);
