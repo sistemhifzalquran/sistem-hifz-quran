@@ -72,6 +72,7 @@
 </template>
 <script>
 import { mapState } from "vuex";
+const fb = require("../firebaseConfig.js");
 //const fb = require("../firebaseConfig.js");
 export default {
   data() {
@@ -95,24 +96,68 @@ export default {
     };
   },
   computed: {
-    ...mapState(["studentDataList", "currentGroup", "noStudent"])
+    ...mapState(["studentDataList", "currentGroup", "noStudent", "studentList"])
   },
   methods: {
-    registerNewStudent() {},
+    registerNewStudent() {
+      this.performingRequest = true;
+      fb.secondaryApp
+        .auth()
+        .createUserWithEmailAndPassword(
+          this.signupForm.iC + "@hifzalquran.com",
+          this.signupForm.iC
+        )
+        .then(credential => {
+          this.studentList.push(credential.user.uid);
+          fb.db
+            .collection("group")
+            .doc(this.currentGroup)
+            .update({ students: this.studentList });
+          fb.usersCollection
+            .doc(credential.user.uid)
+            .set({
+              name: this.signupForm.name,
+              admin: false,
+              ic: this.signupForm.iC,
+              mark: 0
+            })
+            .then(() => {
+              this.studentDataList.push({
+                status: 0,
+                mark: 0,
+                ic: this.signupForm.iC,
+                name: this.signupForm.name,
+                key: credential.user.uid
+              });
+              fb.secondaryApp.auth().signOut();
+              this.performingRequest = false;
+              this.signupForm.name = "";
+              this.signupForm.iC = "";
+              this.dialog = false;
+            })
+            .catch(err => {
+              console.log(err);
+              this.performingRequest = false;
+              this.errorMsg = err.message;
+            });
+        });
+    },
     onlyNumber($event) {
       let keyCode = $event.keyCode ? $event.keyCode : $event.which;
       if ((keyCode < 48 || keyCode > 57) && keyCode !== 46) {
-        // 46 is dot
         $event.preventDefault();
       }
     },
     onlyLetter($event) {
+      //validate for letter as start,can contain space ' and .
       let charCode = $event.keyCode ? $event.keyCode : $event.which;
       if (
         !(
           (charCode > 64 && charCode < 91) ||
           (charCode > 96 && charCode < 123) ||
-          charCode == 32 || charCode == 46 || charCode ==39
+          charCode == 32 ||
+          charCode == 46 ||
+          charCode == 39
         )
       ) {
         $event.preventDefault();
