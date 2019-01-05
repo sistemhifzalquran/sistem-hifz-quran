@@ -5,7 +5,7 @@
     </v-snackbar>
     <v-toolbar app>
       <v-toolbar-side-icon @click="drawer = !drawer"></v-toolbar-side-icon>
-      <v-toolbar-title class="hidden-sm-and-down">El-Haneef</v-toolbar-title>
+      <v-toolbar-title class="hidden-sm-and-down">EL HANEEFF</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-menu offset-y v-model="menu">
         <v-btn flat slot="activator" color="grey">
