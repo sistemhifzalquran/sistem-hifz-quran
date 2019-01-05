@@ -1,6 +1,6 @@
 <template>
   <v-container align-content-center>
-    <v-expansion-panel popout>
+    <v-expansion-panel>
       <v-expansion-panel-content>
         <div slot="header">
           <h2 class="font-weight-regular">Pengumuman</h2>
