@@ -1,5 +1,8 @@
 <template>
-  <v-container align-content-center>
+  <v-container>
+    <v-snackbar v-model="snack" :timeout="2500" top color="success">
+      <span>{{snackMsg}}</span>
+    </v-snackbar>
     <v-menu offset-y>
       <v-btn flat slot="activator" color="grey">
         <v-icon left>expand_more</v-icon>
@@ -40,29 +43,29 @@
         </v-dialog>
       </v-list>
     </v-menu>
-    <v-expansion-panel popout>
-      <v-expansion-panel-content flat v-for="student in studentDataList" :key="student.ic">
-        <v-layout slot="header" row wrap class="pa-1">
-          <v-flex xs12 md6>
-            <div class="caption grey--text">Nama Pelajar</div>
-            <div>{{student.name}}</div>
-          </v-flex>
-          <v-flex xs6 sm4 md2>
-            <div class="caption grey--text">No.Kad Pengenalan</div>
-            <div>{{student.ic}}</div>
-          </v-flex>
-          <v-flex xs6 sm4 md2>
-            <div class="caption grey--text">Purata Markah</div>
-            <div>{{student.mark}}</div>
-          </v-flex>
-          <v-flex xs2 sm4 md2>
-            <div class="right">
-              <v-chip small :class="`${student.status} white--text my-2 caption`">{{student.status}}</v-chip>
-            </div>
-          </v-flex>
-        </v-layout>
-      </v-expansion-panel-content>
-    </v-expansion-panel>
+
+    <v-card flat v-for="student in studentDataList" :key="student.ic">
+      <v-layout row wrap class="pa-3">
+        <v-flex xs12 md6>
+          <div class="caption grey--text">Nama Pelajar</div>
+          <div>{{student.name}}</div>
+        </v-flex>
+        <v-flex xs6 sm4 md2>
+          <div class="caption grey--text">No.Kad Pengenalan</div>
+          <div>{{student.ic}}</div>
+        </v-flex>
+        <v-flex xs6 sm4 md2>
+          <div class="caption grey--text">Purata Markah</div>
+          <div>{{student.mark}}</div>
+        </v-flex>
+        <v-flex xs2 sm4 md2>
+          <div class="right">
+            <v-chip small :class="`${student.status} white--text my-2 caption`">{{student.status}}</v-chip>
+          </div>
+        </v-flex>
+      </v-layout>
+    </v-card>
+
     <v-card
       v-if="noStudent"
       flat
@@ -73,10 +76,12 @@
 <script>
 import { mapState } from "vuex";
 const fb = require("../firebaseConfig.js");
-//const fb = require("../firebaseConfig.js");
+
 export default {
   data() {
     return {
+      snack: false,
+      snackMsg: "",
       signupForm: {
         name: "",
         iC: ""
@@ -130,6 +135,8 @@ export default {
                 key: credential.user.uid
               });
               fb.secondaryApp.auth().signOut();
+              this.snackMsg = "Berjaya Mendaftar " + this.signupForm.name;
+              this.snack = true;
               this.performingRequest = false;
               this.signupForm.name = "";
               this.signupForm.iC = "";
