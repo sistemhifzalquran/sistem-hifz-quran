@@ -55,15 +55,18 @@
           <div>{{student.ic}}</div>
         </v-flex>
         <v-flex xs6 sm4 md2>
-          <div class="caption grey--text">Purata Markah</div>
-          <div>{{student.mark}}</div>
+          <div class="caption grey--text">Prestasi</div>
+          <div>
+            <v-chip small :class="`${student.status} white--text caption`">{{student.mark}}</v-chip>
+          </div>
         </v-flex>
         <v-flex xs2 sm4 md2>
-          <div class="right">
-            <v-chip small :class="`${student.status} white--text my-2 caption`">{{student.status}}</v-chip>
+          <div>
+            <Tasmiq/>
           </div>
         </v-flex>
       </v-layout>
+      <v-divider></v-divider>
     </v-card>
 
     <v-card
@@ -75,9 +78,11 @@
 </template>
 <script>
 import { mapState } from "vuex";
+import Tasmiq from "./Tasmiq";
 const fb = require("../firebaseConfig.js");
 
 export default {
+  components: { Tasmiq },
   data() {
     return {
       snack: false,
