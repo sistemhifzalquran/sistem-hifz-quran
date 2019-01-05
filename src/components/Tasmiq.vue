@@ -3,12 +3,14 @@
     <v-btn slot="activator" round small class="white--text my-2 caption success">TASMIQ</v-btn>
     <v-card>
       <v-card-title>
-        <h2>name</h2>
+        <h2>{{student.name}}</h2>
       </v-card-title>
     </v-card>
   </v-dialog>
 </template>
 
 <script>
-export default {};
+export default {
+  props: ["student"]
+};
 </script>

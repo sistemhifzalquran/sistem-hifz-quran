@@ -62,7 +62,7 @@
         </v-flex>
         <v-flex xs2 sm4 md2>
           <div>
-            <Tasmiq/>
+            <Tasmiq v-bind:student="student"/>
           </div>
         </v-flex>
       </v-layout>
