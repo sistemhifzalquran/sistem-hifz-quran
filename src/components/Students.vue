@@ -110,49 +110,51 @@ export default {
   },
   methods: {
     registerNewStudent() {
-      this.performingRequest = true;
-      fb.secondaryApp
-        .auth()
-        .createUserWithEmailAndPassword(
-          this.signupForm.iC + "@hifzalquran.com",
-          this.signupForm.iC
-        )
-        .then(credential => {
-          this.studentList.push(credential.user.uid);
-          fb.db
-            .collection("group")
-            .doc(this.currentGroup)
-            .update({ students: this.studentList });
-          fb.usersCollection
-            .doc(credential.user.uid)
-            .set({
-              name: this.signupForm.name,
-              admin: false,
-              ic: this.signupForm.iC,
-              mark: 0
-            })
-            .then(() => {
-              this.studentDataList.push({
-                status: 0,
-                mark: 0,
-                ic: this.signupForm.iC,
+      if (this.$refs.formNewStudent.validate()) {
+        this.performingRequest = true;
+        fb.secondaryApp
+          .auth()
+          .createUserWithEmailAndPassword(
+            this.signupForm.iC + "@hifzalquran.com",
+            this.signupForm.iC
+          )
+          .then(credential => {
+            this.studentList.push(credential.user.uid);
+            fb.db
+              .collection("group")
+              .doc(this.currentGroup)
+              .update({ students: this.studentList });
+            fb.usersCollection
+              .doc(credential.user.uid)
+              .set({
                 name: this.signupForm.name,
-                key: credential.user.uid
+                admin: false,
+                ic: this.signupForm.iC,
+                mark: 0
+              })
+              .then(() => {
+                this.studentDataList.push({
+                  status: 0,
+                  mark: 0,
+                  ic: this.signupForm.iC,
+                  name: this.signupForm.name,
+                  key: credential.user.uid
+                });
+                fb.secondaryApp.auth().signOut();
+                this.snackMsg = "Berjaya Mendaftar " + this.signupForm.name;
+                this.snack = true;
+                this.performingRequest = false;
+                this.signupForm.name = "";
+                this.signupForm.iC = "";
+                this.dialog = false;
+              })
+              .catch(err => {
+                console.log(err);
+                this.performingRequest = false;
+                this.errorMsg = err.message;
               });
-              fb.secondaryApp.auth().signOut();
-              this.snackMsg = "Berjaya Mendaftar " + this.signupForm.name;
-              this.snack = true;
-              this.performingRequest = false;
-              this.signupForm.name = "";
-              this.signupForm.iC = "";
-              this.dialog = false;
-            })
-            .catch(err => {
-              console.log(err);
-              this.performingRequest = false;
-              this.errorMsg = err.message;
-            });
-        });
+          });
+      }
     },
     onlyNumber($event) {
       let keyCode = $event.keyCode ? $event.keyCode : $event.which;
