@@ -55,9 +55,8 @@
           <div>{{student.ic}}</div>
         </v-flex>
         <v-flex xs6 sm4 md2>
-          <div class="caption grey--text">Prestasi</div>
           <div>
-            <v-chip small :class="`${student.status} white--text caption`">{{student.mark}}</v-chip>
+            <v-btn round small :color="`${student.status}`" class="white--text my-2 caption">{{student.mark}}%</v-btn>
           </div>
         </v-flex>
         <v-flex xs2 sm4 md2>
@@ -180,26 +179,3 @@ export default {
   }
 };
 </script>
-<style>
-.project.complete {
-  border-left: 4px solid #3cd1c2;
-}
-.project.ongoing {
-  border-left: 4px solid #ffaa2c;
-}
-.project.overdue {
-  border-left: 4px solid #f83e70;
-}
-.v-chip.excel {
-  background: #3cd1c2;
-}
-.v-chip.normal {
-  background: #ffaa2c;
-}
-.v-chip.critical {
-  background: #f83e70;
-}
-.v-chip.good {
-  background: #3e70f8;
-}
-</style>

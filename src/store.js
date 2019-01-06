@@ -46,13 +46,13 @@ export default new Vuex.Store({
     onCreatedStudentDataList: (state, doc) => {
       var x = '';
       if(doc.data().mark <= 40){
-        x = 'critical'
+        x = 'error'
       }else if(doc.data().mark <= 60){
-        x = 'normal'
+        x = 'warning'
       }else if(doc.data().mark <= 80){
-        x = 'good'
+        x = 'info'
       }else if(doc.data().mark <= 100){
-        x = 'excel'
+        x = 'success'
       }
       state.studentDataList.push({
         status: x,
