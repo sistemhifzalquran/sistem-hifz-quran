@@ -23,6 +23,7 @@
               solo
             ></v-select>
           </v-layout>
+          Jumlah Ayat : {{totalAyatTasmiq}}
           <v-layout row>
             <h2 class="font-weight-regular pt-1">Fasohah</h2>
             <v-spacer></v-spacer>
@@ -188,6 +189,23 @@ export default {
     addMark() {}
   },
   computed: {
+    totalAyatTasmiq: function(){
+      if(this.selectedSurahStart == this.selectedSurahEnd){
+        return this.selectedNumberAyatEnd - this.selectedNumberAyatStart +1
+      } else {
+        var totalAyatOfAllSurah = 0;
+        let x = this.selectedSurahStart
+        while(x<this.selectedSurahEnd){
+
+          totalAyatOfAllSurah += this.verses[x-1].totalVerses
+          x++
+        }
+      return   (this.verses[this.selectedSurahStart - 1].totalVerses - this.selectedNumberAyatStart +1)+ this.selectedNumberAyatEnd + totalAyatOfAllSurah -this.verses[this.selectedSurahStart - 1].totalVerses
+        
+      }
+      
+      
+    },
     selectedSurahStartTotalAyat: function() {
       //code bawah ni utk generate array mengikut nilai yang ditetapkan
       return Array.from(
