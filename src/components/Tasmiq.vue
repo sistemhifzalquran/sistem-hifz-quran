@@ -4,11 +4,11 @@
     <v-card>
       <v-card-title>
         <v-layout justify-space-between>
-        <h2>{{student.name}}</h2>
+        <h2>{{student.name}}{{totalMarkList}}</h2>
         <v-btn v-show="edit">Ubah</v-btn>
         <v-menu>
           <v-text-field solo readonly prepend-icon="date_range" :value="date" slot="activator" label="tarikh"></v-text-field>
-          <v-date-picker v-model="date"></v-date-picker>
+          <v-date-picker :max="today" v-model="date"></v-date-picker>
         </v-menu>
         </v-layout>
       </v-card-title>
@@ -62,16 +62,24 @@
 </template>
 
 <script>
+const fb = require("../firebaseConfig.js");
 export default {
+  created(){
+    this.getTotalMarkList()
+  },
   props: ["student"],
   data() {
     return {
       edit: false,
+      today: new Date().toISOString().slice(0,10),
       date: new Date().toISOString().slice(0,10),
+      selectedYear:new Date().toISOString().slice(0,4),
+      selectedMonth:new Date().toISOString().slice(5,7),
       selectedSurahStart: 1,
       selectedNumberAyatStart: 1,
       selectedSurahEnd: 1,
       selectedNumberAyatEnd: 1,
+      totalMarkList: [],
       ulasan: "",
       fasohah: 1,
       hafazan:1,
@@ -197,7 +205,17 @@ export default {
     };
   },
   methods: {
-    addMark() {}
+    getTotalMarkList(){
+    fb.db.collection('users').doc(this.student.key).collection('mark').doc(this.selectedYear).collection('bulan').doc(this.selectedMonth).get()
+    .then((snapshot) => {
+      this.totalMarkList = snapshot.data().mark
+    })
+    },
+    addMark() {
+fb.db.collection('users').doc(this.student.key).collection('mark').doc(this.selectedYear).collection('bulan').doc(this.selectedMonth).update({ mark:this.totalMarkList});
+
+
+    }
   },
   computed: {
     totalAyatTasmiq: function(){
@@ -247,6 +265,8 @@ export default {
         );
       }
     }
-  }
+  },
 };
+
+// cari cara untuk masukkan totalmarklist ke dlm view bila klik tarikh lain.
 </script>
