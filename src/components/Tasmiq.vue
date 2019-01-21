@@ -3,52 +3,57 @@
     <v-btn slot="activator" round small class="white--text my-2 caption success">TASMIQ</v-btn>
     <v-card>
       <v-card-title>
+        <v-layout justify-space-between>
         <h2>{{student.name}}</h2>
+        <v-btn v-show="edit">Ubah</v-btn>
+        <v-menu>
+          <v-text-field solo readonly prepend-icon="date_range" :value="date" slot="activator" label="tarikh"></v-text-field>
+          <v-date-picker v-model="date"></v-date-picker>
+        </v-menu>
+        </v-layout>
       </v-card-title>
       <v-card-text>
         <v-form class="text-xs-right">
           <v-layout>
-            <v-select :items="verses" v-model="selectedSurahStart" label="Surah" solo></v-select>
+            <v-select :items="verses" v-model="selectedSurahStart" label="Surah Mula"></v-select>
             <v-select
               :items="selectedSurahStartTotalAyat"
               v-model="selectedNumberAyatStart"
               label="no ayat Mula"
-              solo
             ></v-select>
-            <v-select :items="versesEnd" v-model="selectedSurahEnd" label="Surah" solo></v-select>
+            <v-select :items="versesEnd" v-model="selectedSurahEnd" label="Surah Akhir"></v-select>
             <v-select
               :items="selectedSurahEndTotalAyat"
               v-model="selectedNumberAyatEnd"
               label="no Ayat Tamat"
-              solo
             ></v-select>
           </v-layout>
           Jumlah Ayat : {{totalAyatTasmiq}}
           <v-layout row>
             <h2 class="font-weight-regular pt-1">Fasohah</h2>
             <v-spacer></v-spacer>
-            <v-rating length="6" hover></v-rating>
+            <v-rating length="6" hover v-model="fasohah"></v-rating>
           </v-layout>
           <v-divider></v-divider>
           <v-layout row>
             <h2 class="font-weight-regular pt-1">Hafazan</h2>
             <v-spacer></v-spacer>
-            <v-rating length="6" hover></v-rating>
+            <v-rating length="6" hover v-model="hafazan"></v-rating>
           </v-layout>
           <v-divider></v-divider>
           <v-layout row>
             <h2 class="font-weight-regular pt-1">Tajwid</h2>
             <v-spacer></v-spacer>
-            <v-rating length="6" hover></v-rating>
+            <v-rating length="6" hover v-model="tajwid"></v-rating>
           </v-layout>
           <v-divider></v-divider>
           <v-layout row>
             <h2 class="font-weight-regular pt-1">Fiqh Ayat</h2>
             <v-spacer></v-spacer>
-            <v-rating length="6" hover></v-rating>
+            <v-rating length="6" hover v-model="fiqhAyat"></v-rating>
           </v-layout>
           <v-divider></v-divider>
-          <v-text-field prepend-icon="group_add" label="ulasan" v-model="ulasan" maxlength="200"></v-text-field>
+          <v-text-field prepend-icon="note_add" label="ulasan" v-model="ulasan" maxlength="200"></v-text-field>
           <v-btn @click="addMark" :loading="performingRequest ? true : false">Hantar</v-btn>
         </v-form>
       </v-card-text>
@@ -61,11 +66,17 @@ export default {
   props: ["student"],
   data() {
     return {
+      edit: false,
+      date: new Date().toISOString().slice(0,10),
       selectedSurahStart: 1,
       selectedNumberAyatStart: 1,
       selectedSurahEnd: 1,
       selectedNumberAyatEnd: 1,
       ulasan: "",
+      fasohah: 1,
+      hafazan:1,
+      tajwid:1,
+      fiqhAyat:1,
       performingRequest: false,
       verses: [
         { text: "1.Al-Fatihah", totalVerses: 7, value: 1 },
