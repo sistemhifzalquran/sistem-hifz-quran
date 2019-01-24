@@ -4,7 +4,7 @@
     <v-card>
       <v-card-title>
         <v-layout justify-space-between>
-          <h2>{{student.name}}{{totalMarkList}}{{selectedMonth}}{{selectedYear}}{{selectectDateMark}}</h2>
+          <h2>{{student.name}}{{totalMarkList}}{{selectedMonth}}{{selectedYear}}{{selectedDateMark}}</h2>
           <v-btn v-show="edit">Ubah</v-btn>
           <v-menu>
             <v-text-field
@@ -245,10 +245,10 @@ export default {
     }
   },
   computed: {
-    selectectDateMark: function() {
+    selectedDateMark: function() {
       return this.totalMarkList.filter(
         date => date.tarikh === this.date.slice(8, 10)
-      );
+      )[0];
     },
     watchMonthYear: function() {
       return this.date.slice(0, 7);
