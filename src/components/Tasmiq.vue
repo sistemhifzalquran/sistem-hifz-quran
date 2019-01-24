@@ -4,12 +4,19 @@
     <v-card>
       <v-card-title>
         <v-layout justify-space-between>
-        <h2>{{student.name}}{{totalMarkList}}</h2>
-        <v-btn v-show="edit">Ubah</v-btn>
-        <v-menu>
-          <v-text-field solo readonly prepend-icon="date_range" :value="date" slot="activator" label="tarikh"></v-text-field>
-          <v-date-picker :max="today" v-model="date"></v-date-picker>
-        </v-menu>
+          <h2>{{student.name}}{{totalMarkList}}{{selectedMonth}}{{selectedYear}}{{selectectDateMark}}</h2>
+          <v-btn v-show="edit">Ubah</v-btn>
+          <v-menu>
+            <v-text-field
+              solo
+              readonly
+              prepend-icon="date_range"
+              :value="date"
+              slot="activator"
+              label="tarikh"
+            ></v-text-field>
+            <v-date-picker :max="today" v-model="date"></v-date-picker>
+          </v-menu>
         </v-layout>
       </v-card-title>
       <v-card-text>
@@ -64,27 +71,26 @@
 <script>
 const fb = require("../firebaseConfig.js");
 export default {
-  created(){
-    this.getTotalMarkList()
+  created() {
+    this.getTotalMarkList();
   },
   props: ["student"],
   data() {
     return {
       edit: false,
-      today: new Date().toISOString().slice(0,10),
-      date: new Date().toISOString().slice(0,10),
-      selectedYear:new Date().toISOString().slice(0,4),
-      selectedMonth:new Date().toISOString().slice(5,7),
+      today: new Date().toISOString().slice(0, 10),
+      date: new Date().toISOString().slice(0, 10),
       selectedSurahStart: 1,
       selectedNumberAyatStart: 1,
       selectedSurahEnd: 1,
       selectedNumberAyatEnd: 1,
       totalMarkList: [],
+
       ulasan: "",
       fasohah: 1,
-      hafazan:1,
-      tajwid:1,
-      fiqhAyat:1,
+      hafazan: 1,
+      tajwid: 1,
+      fiqhAyat: 1,
       performingRequest: false,
       verses: [
         { text: "1.Al-Fatihah", totalVerses: 7, value: 1 },
@@ -205,35 +211,73 @@ export default {
     };
   },
   methods: {
-    getTotalMarkList(){
-    fb.db.collection('users').doc(this.student.key).collection('mark').doc(this.selectedYear).collection('bulan').doc(this.selectedMonth).get()
-    .then((snapshot) => {
-      this.totalMarkList = snapshot.data().mark
-    })
+    getTotalMarkList() {
+      fb.db
+        .collection("users")
+        .doc(this.student.key)
+        .collection("mark")
+        .doc(this.selectedYear)
+        .collection("bulan")
+        .doc(this.selectedMonth)
+        .get()
+        .then(snapshot => {
+          if (snapshot.data() != null) {
+            this.totalMarkList = snapshot.data().mark;
+          } else {
+            this.totalMarkList = [];
+          }
+        });
     },
     addMark() {
-fb.db.collection('users').doc(this.student.key).collection('mark').doc(this.selectedYear).collection('bulan').doc(this.selectedMonth).update({ mark:this.totalMarkList});
-
-
+      fb.db
+        .collection("users")
+        .doc(this.student.key)
+        .collection("mark")
+        .doc(this.selectedYear)
+        .collection("bulan")
+        .doc(this.selectedMonth)
+        .update({ mark: this.totalMarkList });
+    }
+  },
+  watch: {
+    watchMonthYear: function() {
+      this.getTotalMarkList();
     }
   },
   computed: {
-    totalAyatTasmiq: function(){
-      if(this.selectedSurahStart == this.selectedSurahEnd){
-        return this.selectedNumberAyatEnd - this.selectedNumberAyatStart +1
+    selectectDateMark: function() {
+      return this.totalMarkList.filter(
+        date => date.tarikh === this.date.slice(8, 10)
+      );
+    },
+    watchMonthYear: function() {
+      return this.date.slice(0, 7);
+    },
+    selectedYear: function() {
+      return this.date.slice(0, 4);
+    },
+    selectedMonth: function() {
+      return this.date.slice(5, 7);
+    },
+    totalAyatTasmiq: function() {
+      if (this.selectedSurahStart == this.selectedSurahEnd) {
+        return this.selectedNumberAyatEnd - this.selectedNumberAyatStart + 1;
       } else {
         var totalAyatOfAllSurah = 0;
-        let x = this.selectedSurahStart
-        while(x<this.selectedSurahEnd){
-
-          totalAyatOfAllSurah += this.verses[x-1].totalVerses
-          x++
+        let x = this.selectedSurahStart;
+        while (x < this.selectedSurahEnd) {
+          totalAyatOfAllSurah += this.verses[x - 1].totalVerses;
+          x++;
         }
-      return   (this.verses[this.selectedSurahStart - 1].totalVerses - this.selectedNumberAyatStart +1)+ this.selectedNumberAyatEnd + totalAyatOfAllSurah -this.verses[this.selectedSurahStart - 1].totalVerses
-        
+        return (
+          this.verses[this.selectedSurahStart - 1].totalVerses -
+          this.selectedNumberAyatStart +
+          1 +
+          this.selectedNumberAyatEnd +
+          totalAyatOfAllSurah -
+          this.verses[this.selectedSurahStart - 1].totalVerses
+        );
       }
-      
-      
     },
     selectedSurahStartTotalAyat: function() {
       //code bawah ni utk generate array mengikut nilai yang ditetapkan
@@ -265,7 +309,7 @@ fb.db.collection('users').doc(this.student.key).collection('mark').doc(this.sele
         );
       }
     }
-  },
+  }
 };
 
 // cari cara untuk masukkan totalmarklist ke dlm view bila klik tarikh lain.
