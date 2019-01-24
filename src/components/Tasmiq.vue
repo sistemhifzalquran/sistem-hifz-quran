@@ -84,7 +84,7 @@ export default {
       selectedNumberAyatStart: 1,
       selectedSurahEnd: 1,
       selectedNumberAyatEnd: 1,
-      totalMarkList: [],
+      totalMarkList: [{tarikh: new Date().toISOString().slice(8, 10),ulasan:"",mark:"0000"}],
 
       ulasan: "",
       fasohah: 1,
@@ -224,7 +224,7 @@ export default {
           if (snapshot.data() != null) {
             this.totalMarkList = snapshot.data().mark;
           } else {
-            this.totalMarkList = [];
+            this.totalMarkList = [{tarikh: new Date().toISOString().slice(8, 10),ulasan:"",mark:"0000"}];
           }
         });
     },
@@ -242,7 +242,7 @@ export default {
   watch: {
     watchMonthYear: function() {
       this.getTotalMarkList();
-    }
+    },
   },
   computed: {
     selectedDateMark: function() {
