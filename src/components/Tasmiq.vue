@@ -60,7 +60,7 @@
             <v-rating length="6" hover v-model="fiqhAyat"></v-rating>
           </v-layout>
           <v-divider></v-divider>
-          <v-text-field prepend-icon="note_add" label="ulasan" v-model="ulasan" maxlength="200"></v-text-field>
+          <v-text-field prepend-icon="note_add" label="ulasan" v-model="selectedDateMark.ulasan" maxlength="200"></v-text-field>
           <v-btn @click="addMark" :loading="performingRequest ? true : false">Hantar</v-btn>
         </v-form>
       </v-card-text>
@@ -86,11 +86,8 @@ export default {
       selectedNumberAyatEnd: 1,
       totalMarkList: [{tarikh: new Date().toISOString().slice(8, 10),ulasan:"",mark:"0000"}],
 
-      ulasan: "",
-      fasohah: 1,
-      hafazan: 1,
-      tajwid: 1,
-      fiqhAyat: 1,
+
+      
       performingRequest: false,
       verses: [
         { text: "1.Al-Fatihah", totalVerses: 7, value: 1 },
@@ -245,10 +242,29 @@ export default {
     },
   },
   computed: {
+      fasohah: function(){
+      return parseInt(this.selectedDateMark.mark.slice(0,1)) 
+    },
+      hafazan: function(){
+      return parseInt(this.selectedDateMark.mark.slice(1,2)) 
+    },
+      tajwid: function(){
+      return parseInt(this.selectedDateMark.mark.slice(2,3))
+    },
+      fiqhAyat: function(){
+      return parseInt(this.selectedDateMark.mark.slice(3,4))
+    },
     selectedDateMark: function() {
-      return this.totalMarkList.filter(
+      if(this.totalMarkList.filter(
         date => date.tarikh === this.date.slice(8, 10)
-      )[0];
+      )[0]){
+         return this.totalMarkList.filter(
+        date => date.tarikh === this.date.slice(8, 10)
+      )[0]
+      }else{
+        return {tarikh: this.date.slice(8,10),mark:'0000',ulasan:''}
+      }
+     
     },
     watchMonthYear: function() {
       return this.date.slice(0, 7);
@@ -312,5 +328,5 @@ export default {
   }
 };
 
-// cari cara untuk masukkan totalmarklist ke dlm view bila klik tarikh lain.
+
 </script>
