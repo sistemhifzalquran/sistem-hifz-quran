@@ -4,8 +4,8 @@
     <v-card>
       <v-card-title>
         <v-layout justify-space-between>
-          <h2>{{student.name}}{{totalMarkList}}{{selectedMonth}}{{selectedYear}}{{selectedDateMark}}</h2>
-          <v-btn v-show="edit">Ubah</v-btn>
+          <h2>{{student.name}}</h2>
+          <v-btn v-show="edit" @click="edit = false">Ubah</v-btn>
           <v-menu>
             <v-text-field
               solo
@@ -13,7 +13,6 @@
               prepend-icon="date_range"
               :value="date"
               slot="activator"
-              label="tarikh"
             ></v-text-field>
             <v-date-picker :max="today" v-model="date"></v-date-picker>
           </v-menu>
@@ -22,46 +21,38 @@
       <v-card-text>
         <v-form class="text-xs-right">
           <v-layout>
-            <v-select :items="verses" v-model="selectedSurahStart" label="Surah Mula"></v-select>
-            <v-select
-              :items="selectedSurahStartTotalAyat"
-              v-model="selectedNumberAyatStart"
-              label="no ayat Mula"
-            ></v-select>
-            <v-select :items="versesEnd" v-model="selectedSurahEnd" label="Surah Akhir"></v-select>
-            <v-select
-              :items="selectedSurahEndTotalAyat"
-              v-model="selectedNumberAyatEnd"
-              label="no Ayat Tamat"
-            ></v-select>
+            <v-select :disabled="edit" :items="verses" v-model="selectedSurahStart" label="Surah Mula"></v-select>
+            <v-select :disabled="edit" :items="selectedSurahStartTotalAyat" v-model="selectedNumberAyatStart" label="no ayat Mula"></v-select>
+            <v-select :disabled="edit" :items="versesEnd" v-model="selectedSurahEnd" label="Surah Akhir"></v-select>
+            <v-select :disabled="edit" :items="selectedSurahEndTotalAyat" v-model="selectedNumberAyatEnd" label="no Ayat Tamat"></v-select>
           </v-layout>
           Jumlah Ayat : {{totalAyatTasmiq}}
           <v-layout row>
             <h2 class="font-weight-regular pt-1">Fasohah</h2>
             <v-spacer></v-spacer>
-            <v-rating length="6" hover v-model="fasohah"></v-rating>
+            <v-rating :readonly="edit" length="6" hover v-model="fasohah"></v-rating>
           </v-layout>
           <v-divider></v-divider>
           <v-layout row>
             <h2 class="font-weight-regular pt-1">Hafazan</h2>
             <v-spacer></v-spacer>
-            <v-rating length="6" hover v-model="hafazan"></v-rating>
+            <v-rating :readonly="edit" length="6" hover v-model="hafazan"></v-rating>
           </v-layout>
           <v-divider></v-divider>
           <v-layout row>
             <h2 class="font-weight-regular pt-1">Tajwid</h2>
             <v-spacer></v-spacer>
-            <v-rating length="6" hover v-model="tajwid"></v-rating>
+            <v-rating :readonly="edit" length="6" hover v-model="tajwid"></v-rating>
           </v-layout>
           <v-divider></v-divider>
           <v-layout row>
             <h2 class="font-weight-regular pt-1">Fiqh Ayat</h2>
             <v-spacer></v-spacer>
-            <v-rating length="6" hover v-model="fiqhAyat"></v-rating>
+            <v-rating :readonly="edit" length="6" hover v-model="fiqhAyat"></v-rating>
           </v-layout>
           <v-divider></v-divider>
-          <v-text-field prepend-icon="note_add" label="ulasan" v-model="selectedDateMark.ulasan" maxlength="200"></v-text-field>
-          <v-btn @click="addMark" :loading="performingRequest ? true : false">Hantar</v-btn>
+          <v-text-field :disabled="edit" prepend-icon="note_add" label="ulasan" v-model="ulasan" maxlength="200"></v-text-field>
+          <v-btn :disabled="edit" @click="addMark" :loading="performingRequest ? true : false">Hantar</v-btn>
         </v-form>
       </v-card-text>
     </v-card>
@@ -84,8 +75,12 @@ export default {
       selectedNumberAyatStart: 1,
       selectedSurahEnd: 1,
       selectedNumberAyatEnd: 1,
-      totalMarkList: [{tarikh: new Date().toISOString().slice(8, 10),ulasan:"",mark:"0000"}],
-
+      totalMarkList: [{tasmiq: "001001001001",tarikh: new Date().toISOString().slice(8, 10),ulasan:"",mark:"0000"}],
+      fasohah:0,
+      hafazan:0,
+      tajwid:0,
+      fiqhAyat:0,
+      ulasan : "",
 
       
       performingRequest: false,
@@ -220,8 +215,17 @@ export default {
         .then(snapshot => {
           if (snapshot.data() != null) {
             this.totalMarkList = snapshot.data().mark;
+            this.fasohah = parseInt(this.selectedDateMark.mark.slice(0,1)) 
+            this.hafazan= parseInt(this.selectedDateMark.mark.slice(1,2)) 
+            this.tajwid= parseInt(this.selectedDateMark.mark.slice(2,3)) 
+            this.fiqhAyat= parseInt(this.selectedDateMark.mark.slice(3,4))
+            this.ulasan = this.selectedDateMark.ulasan
+            this.selectedSurahStart = parseInt(this.selectedDateMark.tasmiq.slice(0,3))
+            this.selectedNumberAyatStart = parseInt(this.selectedDateMark.tasmiq.slice(3,6))
+            this.selectedSurahEnd = parseInt(this.selectedDateMark.tasmiq.slice(6,9))
+            this.selectedNumberAyatEnd = parseInt(this.selectedDateMark.tasmiq.slice(9,12))
           } else {
-            this.totalMarkList = [{tarikh: new Date().toISOString().slice(8, 10),ulasan:"",mark:"0000"}];
+            this.totalMarkList = [{tasmiq: "001001001001",tarikh: new Date().toISOString().slice(8, 10),ulasan:"",mark:"0000"}];
           }
         });
     },
@@ -240,20 +244,24 @@ export default {
     watchMonthYear: function() {
       this.getTotalMarkList();
     },
+    date: function(){
+        this.fasohah = parseInt(this.selectedDateMark.mark.slice(0,1)) 
+        this.hafazan = parseInt(this.selectedDateMark.mark.slice(1,2)) 
+        this.tajwid = parseInt(this.selectedDateMark.mark.slice(2,3))
+        this.fiqhAyat = parseInt(this.selectedDateMark.mark.slice(3,4))
+        this.ulasan = this.selectedDateMark.ulasan
+        this.selectedSurahStart = parseInt(this.selectedDateMark.tasmiq.slice(0,3))
+        this.selectedNumberAyatStart = parseInt(this.selectedDateMark.tasmiq.slice(3,6))
+        this.selectedSurahEnd = parseInt(this.selectedDateMark.tasmiq.slice(6,9))
+        this.selectedNumberAyatEnd = parseInt(this.selectedDateMark.tasmiq.slice(9,12))
+        if(this.date != this.today){
+         this.edit = true
+        }else{
+         this.edit = false
+      }
+    },
   },
   computed: {
-      fasohah: function(){
-      return parseInt(this.selectedDateMark.mark.slice(0,1)) 
-    },
-      hafazan: function(){
-      return parseInt(this.selectedDateMark.mark.slice(1,2)) 
-    },
-      tajwid: function(){
-      return parseInt(this.selectedDateMark.mark.slice(2,3))
-    },
-      fiqhAyat: function(){
-      return parseInt(this.selectedDateMark.mark.slice(3,4))
-    },
     selectedDateMark: function() {
       if(this.totalMarkList.filter(
         date => date.tarikh === this.date.slice(8, 10)
@@ -262,7 +270,7 @@ export default {
         date => date.tarikh === this.date.slice(8, 10)
       )[0]
       }else{
-        return {tarikh: this.date.slice(8,10),mark:'0000',ulasan:''}
+        return {tasmiq: "001001001001",tarikh: this.date.slice(8,10),mark:'0000',ulasan:''}
       }
      
     },
