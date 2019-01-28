@@ -1,5 +1,5 @@
 <template>
-  <v-dialog max-width="800px">
+  <v-dialog v-model="dialog" max-width="800px">
     <v-btn slot="activator" round small class="white--text my-2 caption success">TASMIQ</v-btn>
     <v-card>
       <v-card-title>
@@ -52,7 +52,7 @@
           </v-layout>
           <v-divider></v-divider>
           <v-text-field :disabled="edit" prepend-icon="note_add" label="ulasan" v-model="ulasan" maxlength="200"></v-text-field>
-          <v-btn :disabled="edit" @click="addMark" :loading="performingRequest ? true : false">Hantar</v-btn>
+          <v-btn :disabled="edit" @click="addMark" :loading="loading" class="success" >Hantar</v-btn>
         </v-form>
       </v-card-text>
     </v-card>
@@ -68,7 +68,10 @@ export default {
   props: ["student"],
   data() {
     return {
+      loading: false,
+      dialog: false,
       edit: false,
+
       today: new Date().toISOString().slice(0, 10),
       date: new Date().toISOString().slice(0, 10),
       selectedSurahStart: 1,
@@ -81,7 +84,7 @@ export default {
       tajwid:0,
       fiqhAyat:0,
       ulasan : "",
-
+      
       
       performingRequest: false,
       verses: [
@@ -230,6 +233,7 @@ export default {
         });
     },
     addMark() {
+      this.loading = true
       function kira(value){
         if(value <100){
           if(value <10){
@@ -256,7 +260,12 @@ export default {
         .doc(this.selectedYear)
         .collection("bulan")
         .doc(this.selectedMonth)
-        .update({ mark: this.totalMarkList });
+        .update({ mark: this.totalMarkList })
+        .then(()=>{
+          this.loading = false
+          this.dialog = false
+
+        })
     }
   },
   watch: {
