@@ -230,11 +230,24 @@ export default {
         });
     },
     addMark() {
+      function kira(value){
+        if(value <100){
+          if(value <10){
+            return "00"+value.toString()
+            }else{
+              return "0" + value.toString()
+              }
+        }else{
+          return value.toString()
+          }
+      }
+      let convertTasmiq = kira(this.selectedSurahStart) + kira(this.selectedNumberAyatStart) + kira(this.selectedSurahEnd) + kira(this.selectedNumberAyatEnd)
       let convertMark = this.fasohah.toString() + this.hafazan.toString() + this.tajwid.toString() + this.fiqhAyat.toString()
+      
       if(this.totalMarkList.filter(date => date.tarikh === this.date.slice(8, 10))[0]){
-        this.totalMarkList[this.totalMarkList.findIndex(x => x.tarikh == this.date.slice(8, 10))] = {tarikh: this.date.slice(8, 10),ulasan : this.ulasan,mark: convertMark,}
+        this.totalMarkList[this.totalMarkList.findIndex(x => x.tarikh == this.date.slice(8, 10))] = {tarikh: this.date.slice(8, 10),ulasan : this.ulasan,mark: convertMark,tasmiq: convertTasmiq}
       }else{
-        this.totalMarkList.push({tarikh: this.date.slice(8, 10),ulasan : this.ulasan,mark: convertMark,})
+        this.totalMarkList.push({tarikh: this.date.slice(8, 10),ulasan : this.ulasan,mark: convertMark,tasmiq: convertTasmiq})
       }
       fb.db
         .collection("users")
