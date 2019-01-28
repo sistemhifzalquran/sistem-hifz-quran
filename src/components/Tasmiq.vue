@@ -230,6 +230,12 @@ export default {
         });
     },
     addMark() {
+      let convertMark = this.fasohah.toString() + this.hafazan.toString() + this.tajwid.toString() + this.fiqhAyat.toString()
+      if(this.totalMarkList.filter(date => date.tarikh === this.date.slice(8, 10))[0]){
+        this.totalMarkList[this.totalMarkList.findIndex(x => x.tarikh == this.date.slice(8, 10))] = {tarikh: this.date.slice(8, 10),ulasan : this.ulasan,mark: convertMark,}
+      }else{
+        this.totalMarkList.push({tarikh: this.date.slice(8, 10),ulasan : this.ulasan,mark: convertMark,})
+      }
       fb.db
         .collection("users")
         .doc(this.student.key)
