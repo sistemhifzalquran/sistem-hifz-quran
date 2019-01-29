@@ -71,9 +71,8 @@ export default {
       loading: false,
       dialog: false,
       edit: false,
-
-      today: new Date().toISOString().slice(0, 10),
-      date: new Date().toISOString().slice(0, 10),
+      today: new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10),//calculation tu untuk bg timezone xlari sebab offset
+      date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10),
       selectedSurahStart: 1,
       selectedNumberAyatStart: 1,
       selectedSurahEnd: 1,
@@ -303,7 +302,7 @@ export default {
         this.selectedNumberAyatStart = parseInt(this.selectedDateMark.tasmiq.slice(3,6))
         this.selectedSurahEnd = parseInt(this.selectedDateMark.tasmiq.slice(6,9))
         this.selectedNumberAyatEnd = parseInt(this.selectedDateMark.tasmiq.slice(9,12))
-        if(this.date != this.today){
+        if(this.date < this.today){
          this.edit = true
         }else{
          this.edit = false
