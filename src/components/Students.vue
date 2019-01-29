@@ -56,7 +56,12 @@
         </v-flex>
         <v-flex xs6 sm4 md2>
           <div>
-            <v-btn round small :color="`${student.status}`" class="white--text my-2 caption">{{student.mark}}%</v-btn>
+            <v-btn
+              round
+              small
+              :color="`${student.status}`"
+              class="white--text my-2 caption"
+            >{{student.mark}}%</v-btn>
           </div>
         </v-flex>
         <v-flex xs2 sm4 md2>
@@ -132,6 +137,11 @@ export default {
                 mark: 0
               })
               .then(() => {
+                fb.usersCollection
+                  .doc(credential.user.uid)
+                  .collection("mark")
+                  .doc(new Date().toISOString().slice(0, 4))
+                  .set({});
                 this.studentDataList.push({
                   status: 0,
                   mark: 0,

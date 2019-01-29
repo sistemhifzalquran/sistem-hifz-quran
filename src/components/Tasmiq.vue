@@ -78,11 +78,11 @@ export default {
       selectedNumberAyatStart: 1,
       selectedSurahEnd: 1,
       selectedNumberAyatEnd: 1,
-      totalMarkList: [{tasmiq: "001001001001",tarikh: new Date().toISOString().slice(8, 10),ulasan:"",mark:"0000"}],
-      fasohah:0,
-      hafazan:0,
-      tajwid:0,
-      fiqhAyat:0,
+      totalMarkList: [],
+      fasohah:1,
+      hafazan:1,
+      tajwid:1,
+      fiqhAyat:1,
       ulasan : "",
       
       
@@ -207,30 +207,51 @@ export default {
   },
   methods: {
     getTotalMarkList() {
-      fb.db
-        .collection("users")
-        .doc(this.student.key)
-        .collection("mark")
-        .doc(this.selectedYear)
-        .collection("bulan")
-        .doc(this.selectedMonth)
+      let dbMarkYear = fb.db.collection("users").doc(this.student.key).collection("mark").doc(this.selectedYear)
+      dbMarkYear
         .get()
-        .then(snapshot => {
-          if (snapshot.data() != null) {
-            this.totalMarkList = snapshot.data().mark;
-            this.fasohah = parseInt(this.selectedDateMark.mark.slice(0,1)) 
-            this.hafazan= parseInt(this.selectedDateMark.mark.slice(1,2)) 
-            this.tajwid= parseInt(this.selectedDateMark.mark.slice(2,3)) 
-            this.fiqhAyat= parseInt(this.selectedDateMark.mark.slice(3,4))
-            this.ulasan = this.selectedDateMark.ulasan
-            this.selectedSurahStart = parseInt(this.selectedDateMark.tasmiq.slice(0,3))
-            this.selectedNumberAyatStart = parseInt(this.selectedDateMark.tasmiq.slice(3,6))
-            this.selectedSurahEnd = parseInt(this.selectedDateMark.tasmiq.slice(6,9))
-            this.selectedNumberAyatEnd = parseInt(this.selectedDateMark.tasmiq.slice(9,12))
-          } else {
-            this.totalMarkList = [{tasmiq: "001001001001",tarikh: new Date().toISOString().slice(8, 10),ulasan:"",mark:"0000"}];
+        .then((doc) => {
+          if (!doc.exists) {
+              dbMarkYear.set({})
+              .then(()=>{
+                dbMarkYear
+                  .collection("bulan")
+                  .doc(this.selectedMonth)
+                  .set({})
+              })
+          }else{      
+            dbMarkYear
+              .collection("bulan")
+              .doc(this.selectedMonth)
+              .get()
+              .then(snapshot => {
+                if (!snapshot.exists) {
+                  dbMarkYear
+                    .collection("bulan")
+                    .doc(this.selectedMonth)
+                    .set({})
+                } else {
+                    if (snapshot.data().mark) {
+                      this.totalMarkList = snapshot.data().mark;
+                      this.fasohah = parseInt(this.selectedDateMark.mark.slice(0,1)) 
+                      this.hafazan= parseInt(this.selectedDateMark.mark.slice(1,2)) 
+                      this.tajwid= parseInt(this.selectedDateMark.mark.slice(2,3)) 
+                      this.fiqhAyat= parseInt(this.selectedDateMark.mark.slice(3,4))
+                      this.ulasan = this.selectedDateMark.ulasan
+                      this.selectedSurahStart = parseInt(this.selectedDateMark.tasmiq.slice(0,3))
+                      this.selectedNumberAyatStart = parseInt(this.selectedDateMark.tasmiq.slice(3,6))
+                      this.selectedSurahEnd = parseInt(this.selectedDateMark.tasmiq.slice(6,9))
+                      this.selectedNumberAyatEnd = parseInt(this.selectedDateMark.tasmiq.slice(9,12))
+                    }
+                }
+                
+              });
+
           }
-        });
+        })  
+
+
+
     },
     addMark() {
       this.loading = true
@@ -264,7 +285,7 @@ export default {
         .then(()=>{
           this.loading = false
           this.dialog = false
-
+          this.date = this.today
         })
     }
   },
