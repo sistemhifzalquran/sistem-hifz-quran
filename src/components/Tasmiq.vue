@@ -5,7 +5,6 @@
       <v-card-title>
         <v-layout justify-space-between>
           <h2>{{student.name}}</h2>
-          <v-btn v-show="edit" @click="edit = false">Ubah</v-btn>
           <v-menu>
             <v-text-field
               solo
@@ -52,7 +51,10 @@
           </v-layout>
           <v-divider></v-divider>
           <v-text-field :disabled="edit" prepend-icon="note_add" label="ulasan" v-model="ulasan" maxlength="200"></v-text-field>
-          <v-btn :disabled="edit" @click="addMark" :loading="loading" class="success" >Hantar</v-btn>
+          <v-layout justify-space-between>
+          <v-btn v-show="edit" @click="edit = false">Ubah</v-btn>
+          <h3 class="red--text">{{warningStatus}}</h3>
+          <v-btn :disabled="edit" @click="addMark" :loading="loading" class="success" >Hantar</v-btn></v-layout>
         </v-form>
       </v-card-text>
     </v-card>
@@ -68,6 +70,7 @@ export default {
   props: ["student"],
   data() {
     return {
+      warningStatus: '',
       loading: false,
       dialog: false,
       edit: false,
@@ -78,10 +81,10 @@ export default {
       selectedSurahEnd: 1,
       selectedNumberAyatEnd: 1,
       totalMarkList: [],
-      fasohah:1,
-      hafazan:1,
-      tajwid:1,
-      fiqhAyat:1,
+      fasohah:0,
+      hafazan:0,
+      tajwid:0,
+      fiqhAyat:0,
       ulasan : "",
       
       
@@ -253,7 +256,6 @@ export default {
 
     },
     addMark() {
-      this.loading = true
       function kira(value){
         if(value <100){
           if(value <10){
@@ -265,6 +267,11 @@ export default {
           return value.toString()
           }
       }
+      if(this.fasohah <1 || this.hafazan <1 || this.tajwid <1 || this.fiqhAyat <1){
+        this.warningStatus= 'pastikan markah di isi lengkap'
+      }else{
+      this.warningStatus = ''
+      this.loading = true
       let convertTasmiq = kira(this.selectedSurahStart) + kira(this.selectedNumberAyatStart) + kira(this.selectedSurahEnd) + kira(this.selectedNumberAyatEnd)
       let convertMark = this.fasohah.toString() + this.hafazan.toString() + this.tajwid.toString() + this.fiqhAyat.toString()
       
@@ -286,7 +293,7 @@ export default {
           this.dialog = false
           this.date = this.today
         })
-    }
+    }}
   },
   watch: {
     watchMonthYear: function() {
