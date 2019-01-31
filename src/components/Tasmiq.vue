@@ -5,6 +5,29 @@
       <v-card-title>
         <v-layout justify-space-between>
           <h2>{{student.name}}</h2>
+          <v-spacer></v-spacer>
+          <v-dialog>
+            <v-btn slot="activator" flat icon color="blue">
+              <v-icon>list</v-icon>
+            </v-btn>
+            <v-card>
+              <v-card-title>
+                <h2>test</h2>
+              </v-card-title>
+              <v-list>
+          <v-list-tile
+            v-for="item in totalMarkList"
+            :key="item.tarikh"
+          >
+            <v-list-tile-content>
+              <v-list-tile-title v-text="item.tarikh"></v-list-tile-title>
+              {{item.ulasan}}
+              {{item.tasmiq}}
+            </v-list-tile-content>
+          </v-list-tile>
+        </v-list>
+            </v-card>
+          </v-dialog>
           <v-menu>
             <v-text-field
               solo
@@ -214,24 +237,17 @@ export default {
         .get()
         .then((doc) => {
           if (!doc.exists) {
-              dbMarkYear.set({})
-              .then(()=>{
-                dbMarkYear
-                  .collection("bulan")
-                  .doc(this.selectedMonth)
-                  .set({})
-              })
-          }else{      
+              console.log('year not exist')
+              this.totalMarkList=[]
+          }else{
             dbMarkYear
               .collection("bulan")
               .doc(this.selectedMonth)
               .get()
               .then(snapshot => {
                 if (!snapshot.exists) {
-                  dbMarkYear
-                    .collection("bulan")
-                    .doc(this.selectedMonth)
-                    .set({})
+                  console.log('month not exist')
+                  this.totalMarkList=[]
                 } else {
                     if (snapshot.data().mark) {
                       this.totalMarkList = snapshot.data().mark;
@@ -278,8 +294,15 @@ export default {
       if(this.totalMarkList.filter(date => date.tarikh === this.date.slice(8, 10))[0]){
         this.totalMarkList[this.totalMarkList.findIndex(x => x.tarikh == this.date.slice(8, 10))] = {tarikh: this.date.slice(8, 10),ulasan : this.ulasan,mark: convertMark,tasmiq: convertTasmiq}
       }else{
-        this.totalMarkList.push({tarikh: this.date.slice(8, 10),ulasan : this.ulasan,mark: convertMark,tasmiq: convertTasmiq})
+        this.totalMarkList.unshift({tarikh: this.date.slice(8, 10),ulasan : this.ulasan,mark: convertMark,tasmiq: convertTasmiq})
       }
+      fb.db
+        .collection("users")
+        .doc(this.student.key)
+        .collection("mark")
+        .doc(this.selectedYear)
+        .set({},{merge:true})
+
       fb.db
         .collection("users")
         .doc(this.student.key)
@@ -287,7 +310,7 @@ export default {
         .doc(this.selectedYear)
         .collection("bulan")
         .doc(this.selectedMonth)
-        .update({ mark: this.totalMarkList })
+        .set({ mark: this.totalMarkList },{merge:true})
         .then(()=>{
           this.loading = false
           this.dialog = false
