@@ -300,6 +300,7 @@ export default {
       this.getTotalMarkList();
     },
     date: function(){
+        this.warningStatus = ''
         this.fasohah = parseInt(this.selectedDateMark.mark.slice(0,1)) 
         this.hafazan = parseInt(this.selectedDateMark.mark.slice(1,2)) 
         this.tajwid = parseInt(this.selectedDateMark.mark.slice(2,3))
