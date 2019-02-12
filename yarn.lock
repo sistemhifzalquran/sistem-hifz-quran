@@ -8090,10 +8090,10 @@ vuetify-loader@^1.0.5:
   dependencies:
     loader-utils "^1.1.0"
 
-vuetify@1.4.3:
-  version "1.4.3"
-  resolved "https://registry.yarnpkg.com/vuetify/-/vuetify-1.4.3.tgz#dfa187a2bd37427c352bdd194837430a06b45735"
-  integrity sha512-BRTETa3rQ016OOkL1Y28vOYPPJFU0TwSr9nwjT/M840bnk0A9znk1mGvdk1W+qb9IbtWJ9RUk2W1+7l9RcKa8A==
+vuetify@1.4.8:
+  version "1.4.8"
+  resolved "https://registry.yarnpkg.com/vuetify/-/vuetify-1.4.8.tgz#66737ac0ea71fc5d4f1b112858d378382f59dd19"
+  integrity sha512-toMTK8k1t+HgPhJsw03rQ5xOvUyJyrtCtnImFvl3Vs8huhsrr6Jnb2DgR6tOuzqDYuMIbbcWxJWeKDY6PVKcpg==
 
 vuex@^3.0.1:
   version "3.1.0"
