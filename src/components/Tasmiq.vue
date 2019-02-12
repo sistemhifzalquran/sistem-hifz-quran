@@ -6,26 +6,32 @@
         <v-layout justify-space-between>
           <h2>{{student.name}}</h2>
           <v-spacer></v-spacer>
-          <v-dialog>
+          <v-dialog max-width="600">
             <v-btn slot="activator" flat icon color="blue">
               <v-icon>list</v-icon>
             </v-btn>
             <v-card>
               <v-card-title>
-                <h2>test</h2>
+                <h2>Senarai Tasmiq lepas</h2>
               </v-card-title>
-              <v-list>
-          <v-list-tile
-            v-for="item in totalMarkList"
-            :key="item.tarikh"
-          >
-            <v-list-tile-content>
-              <v-list-tile-title v-text="item.tarikh"></v-list-tile-title>
-              {{item.ulasan}}
-              {{item.tasmiq}}
-            </v-list-tile-content>
-          </v-list-tile>
-        </v-list>
+          <v-card-text v-for="item in totalMarkList" :key="item.tarikh" class="py-0">
+              <v-layout justify-space-between row class="py-0">
+                <div>{{item.tarikh}}</div><div>{{item.ulasan}}</div><div>{{item.tasmiq.slice(0,3)}}</div>
+              <v-speed-dial right direction="left">
+  <v-btn slot="activator" round small class="white--text pa-0 ma-0 caption error">padam</v-btn>
+      <v-btn
+        fab
+        dark
+        small
+        color="red"
+      >
+        <v-icon>delete</v-icon>
+      </v-btn>
+    </v-speed-dial>
+              </v-layout>
+              <v-divider></v-divider>
+          </v-card-text>
+        
             </v-card>
           </v-dialog>
           <v-menu>
