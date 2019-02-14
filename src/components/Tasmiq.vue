@@ -6,7 +6,7 @@
         <v-layout justify-space-between>
           <h2>{{student.name}}</h2>
           <v-spacer></v-spacer>
-          <v-dialog max-width="600">
+          <v-dialog max-width="800">
             <v-btn slot="activator" flat icon color="blue">
               <v-icon>list</v-icon>
             </v-btn>
@@ -14,21 +14,56 @@
               <v-card-title>
                 <h2>Senarai Tasmiq lepas</h2>
               </v-card-title>
+              <v-card-text>
+               <v-layout justify-space-between row class="py-0">
+                 <v-flex xs5>
+                  <v-layout row>
+                    <v-flex xs2>HB</v-flex>
+                    <v-flex>Ulasan</v-flex>
+                  </v-layout>
+                 </v-flex>
+                 <v-flex xs1>Mula</v-flex>
+                 <v-flex xs1>Tamat</v-flex>
+                 <v-flex xs1>Jumlah</v-flex>
+                 <v-flex xs2>
+                  <v-layout row>
+                    <v-flex xs3>F</v-flex>
+                    <v-flex xs3>H</v-flex>
+                    <v-flex xs3>T</v-flex>
+                    <v-flex xs3>FA</v-flex>
+                  </v-layout>
+                 </v-flex>
+                 <v-flex xs2></v-flex>
+              </v-layout>
+
+              </v-card-text>
           <v-card-text v-for="item in totalMarkList" :key="item.tarikh" class="py-0">
               <v-layout justify-space-between row class="py-0">
-                <div>{{item.tarikh}}</div><div>{{item.ulasan}}</div><div>{{item.tasmiq.slice(0,3)}}</div>
-              <v-speed-dial right direction="left">
-  <v-btn slot="activator" round small class="white--text pa-0 ma-0 caption error">padam</v-btn>
-      <v-btn
-        fab
-        dark
-        small
-        color="red"
-      >
-        <v-icon>delete</v-icon>
-      </v-btn>
-    </v-speed-dial>
+                 <v-flex xs5>
+                  <v-layout row>
+                    <v-flex xs2>{{item.tarikh}}</v-flex>
+                    <v-flex>{{item.ulasan}}</v-flex>
+                  </v-layout>
+                 </v-flex>
+                 <v-flex xs1>{{parseInt(item.tasmiq.slice(0,3))}}.{{parseInt(item.tasmiq.slice(3,6))}}</v-flex>
+                 <v-flex xs1>{{parseInt(item.tasmiq.slice(6,9))}}.{{parseInt(item.tasmiq.slice(9,12))}}</v-flex>
+                 <v-flex xs1>{{totalAyatTasmiqUtkList(parseInt(item.tasmiq.slice(0,3)),parseInt(item.tasmiq.slice(6,9)),parseInt(item.tasmiq.slice(3,6)),parseInt(item.tasmiq.slice(9,12)))}}</v-flex>
+                 <v-flex xs2>
+                  <v-layout row>
+                    <v-flex xs3>{{parseInt(item.mark.slice(0,1))}}</v-flex>
+                    <v-flex xs3>{{parseInt(item.mark.slice(1,2))}}</v-flex>
+                    <v-flex xs3>{{parseInt(item.mark.slice(2,3))}}</v-flex>
+                    <v-flex xs3>{{parseInt(item.mark.slice(3,4))}}</v-flex>
+                  </v-layout>
+                 </v-flex>
+                 <v-flex xs2>
+                   <v-speed-dial right direction="left">
+                     <v-btn slot="activator" round small class="white--text py-0 my-0 caption error">X</v-btn>
+                      <v-btn round small class="white--text pa-0 ma-0 caption error" @click="deleteMark(item.tarikh)">Ya</v-btn>
+                   </v-speed-dial>
+                 </v-flex>
               </v-layout>
+
               <v-divider></v-divider>
           </v-card-text>
         
@@ -237,6 +272,26 @@ export default {
     };
   },
   methods: {
+    totalAyatTasmiqUtkList(surahStart,surahEnd,ayatStart,ayatEnd) {
+      if (surahStart == surahEnd) {
+        return ayatEnd - ayatStart + 1;
+      } else {
+        let totalAyatOfAllSurah = 0;
+        let x = surahStart;
+        while (x < surahEnd) {
+          totalAyatOfAllSurah += this.verses[x - 1].totalVerses;
+          x++;
+        }
+        return (
+          this.verses[surahStart - 1].totalVerses -
+          ayatStart +
+          1 +
+          ayatEnd +
+          totalAyatOfAllSurah -
+          this.verses[surahStart - 1].totalVerses
+        );
+      }
+    },
     getTotalMarkList() {
       let dbMarkYear = fb.db.collection("users").doc(this.student.key).collection("mark").doc(this.selectedYear)
       dbMarkYear
@@ -277,6 +332,22 @@ export default {
 
 
     },
+    deleteMark(hari){
+      for( var i = 0; i <= this.totalMarkList.length-1; i++){ 
+        if ( this.totalMarkList[i].tarikh == hari) {
+          this.totalMarkList.splice(i, 1); 
+           fb.db
+        .collection("users")
+        .doc(this.student.key)
+        .collection("mark")
+        .doc(this.selectedYear)
+        .collection("bulan")
+        .doc(this.selectedMonth)
+        .set({ mark: this.totalMarkList },{merge:true})
+        }
+      }
+      
+    },
     addMark() {
       function kira(value){
         if(value <100){
@@ -301,6 +372,7 @@ export default {
         this.totalMarkList[this.totalMarkList.findIndex(x => x.tarikh == this.date.slice(8, 10))] = {tarikh: this.date.slice(8, 10),ulasan : this.ulasan,mark: convertMark,tasmiq: convertTasmiq}
       }else{
         this.totalMarkList.unshift({tarikh: this.date.slice(8, 10),ulasan : this.ulasan,mark: convertMark,tasmiq: convertTasmiq})
+        this.totalMarkList.sort((a, b) => (a.tarikh - b.tarikh))
       }
       fb.db
         .collection("users")
