@@ -15,68 +15,76 @@
                 <h2>Senarai Tasmiq lepas Tahun {{selectedYear}}</h2>
               </v-card-title>
               <v-card-text>
-               <v-layout justify-space-between row class="py-0">
-                 <v-flex xs5>
-                  <v-layout row>
-                    <v-flex xs2>HB</v-flex>
-                    <v-flex>Ulasan</v-flex>
-                  </v-layout>
-                 </v-flex>
-                 <v-flex xs1>Mula</v-flex>
-                 <v-flex xs1>Tamat</v-flex>
-                 <v-flex xs1>Jumlah</v-flex>
-                 <v-flex xs2>
-                  <v-layout row>
-                    <v-flex xs3>F</v-flex>
-                    <v-flex xs3>H</v-flex>
-                    <v-flex xs3>T</v-flex>
-                    <v-flex xs3>FA</v-flex>
-                  </v-layout>
-                 </v-flex>
-                 <v-flex xs2></v-flex>
-              </v-layout>
-
+                <v-layout justify-space-between row class="py-0">
+                  <v-flex xs5>
+                    <v-layout row>
+                      <v-flex xs2>HB</v-flex>
+                      <v-flex>Ulasan</v-flex>
+                    </v-layout>
+                  </v-flex>
+                  <v-flex xs1>Mula</v-flex>
+                  <v-flex xs1>Tamat</v-flex>
+                  <v-flex xs1>Jumlah</v-flex>
+                  <v-flex xs2>
+                    <v-layout row>
+                      <v-flex xs3>F</v-flex>
+                      <v-flex xs3>H</v-flex>
+                      <v-flex xs3>T</v-flex>
+                      <v-flex xs3>FA</v-flex>
+                    </v-layout>
+                  </v-flex>
+                  <v-flex xs2></v-flex>
+                </v-layout>
               </v-card-text>
-          <v-card-text v-for="item in totalMarkList" :key="item.tarikh" class="py-0">
-              <v-layout justify-space-between row class="py-0">
-                 <v-flex xs5>
-                  <v-layout row>
-                    <v-flex xs2>{{item.tarikh}}</v-flex>
-                    <v-flex>{{item.ulasan}}</v-flex>
-                  </v-layout>
-                 </v-flex>
-                 <v-flex xs1>{{parseInt(item.tasmiq.slice(0,3))}}.{{parseInt(item.tasmiq.slice(3,6))}}</v-flex>
-                 <v-flex xs1>{{parseInt(item.tasmiq.slice(6,9))}}.{{parseInt(item.tasmiq.slice(9,12))}}</v-flex>
-                 <v-flex xs1>{{totalAyatTasmiqUtkList(parseInt(item.tasmiq.slice(0,3)),parseInt(item.tasmiq.slice(6,9)),parseInt(item.tasmiq.slice(3,6)),parseInt(item.tasmiq.slice(9,12)))}}</v-flex>
-                 <v-flex xs2>
-                  <v-layout row>
-                    <v-flex xs3>{{parseInt(item.mark.slice(0,1))}}</v-flex>
-                    <v-flex xs3>{{parseInt(item.mark.slice(1,2))}}</v-flex>
-                    <v-flex xs3>{{parseInt(item.mark.slice(2,3))}}</v-flex>
-                    <v-flex xs3>{{parseInt(item.mark.slice(3,4))}}</v-flex>
-                  </v-layout>
-                 </v-flex>
-                 <v-flex xs2>
-                   <v-speed-dial right direction="left">
-                     <v-btn slot="activator" round small class="white--text py-0 my-0 caption error">X</v-btn>
-                      <v-btn round small class="white--text pa-0 ma-0 caption error" @click="deleteMark(item.tarikh)">Ya</v-btn>
-                   </v-speed-dial>
-                 </v-flex>
-              </v-layout>
+              <v-card-text v-for="item in totalMarkList" :key="item.tarikh" class="py-0">
+                <v-layout justify-space-between row class="py-0">
+                  <v-flex xs5>
+                    <v-layout row>
+                      <v-flex xs2>{{item.tarikh}}</v-flex>
+                      <v-flex>{{item.ulasan}}</v-flex>
+                    </v-layout>
+                  </v-flex>
+                  <v-flex
+                    xs1
+                  >{{parseInt(item.tasmiq.slice(0,3))}}.{{parseInt(item.tasmiq.slice(3,6))}}</v-flex>
+                  <v-flex
+                    xs1
+                  >{{parseInt(item.tasmiq.slice(6,9))}}.{{parseInt(item.tasmiq.slice(9,12))}}</v-flex>
+                  <v-flex
+                    xs1
+                  >{{totalAyatTasmiqUtkList(parseInt(item.tasmiq.slice(0,3)),parseInt(item.tasmiq.slice(6,9)),parseInt(item.tasmiq.slice(3,6)),parseInt(item.tasmiq.slice(9,12)))}}</v-flex>
+                  <v-flex xs2>
+                    <v-layout row>
+                      <v-flex xs3>{{parseInt(item.mark.slice(0,1))}}</v-flex>
+                      <v-flex xs3>{{parseInt(item.mark.slice(1,2))}}</v-flex>
+                      <v-flex xs3>{{parseInt(item.mark.slice(2,3))}}</v-flex>
+                      <v-flex xs3>{{parseInt(item.mark.slice(3,4))}}</v-flex>
+                    </v-layout>
+                  </v-flex>
+                  <v-flex xs2>
+                    <v-speed-dial right direction="left">
+                      <v-btn
+                        slot="activator"
+                        round
+                        small
+                        class="white--text py-0 my-0 caption error"
+                      >X</v-btn>
+                      <v-btn
+                        round
+                        small
+                        class="white--text pa-0 ma-0 caption error"
+                        @click="deleteMark(item.tarikh)"
+                      >Ya</v-btn>
+                    </v-speed-dial>
+                  </v-flex>
+                </v-layout>
 
-              <v-divider></v-divider>
-          </v-card-text>
-        
+                <v-divider></v-divider>
+              </v-card-text>
             </v-card>
           </v-dialog>
           <v-menu>
-            <v-text-field
-              solo
-              readonly
-              prepend-icon="date_range"
-              :value="date"
-              slot="activator"
-            ></v-text-field>
+            <v-text-field solo readonly prepend-icon="date_range" :value="date" slot="activator"></v-text-field>
             <v-date-picker :max="today" v-model="date"></v-date-picker>
           </v-menu>
         </v-layout>
@@ -84,10 +92,30 @@
       <v-card-text>
         <v-form class="text-xs-right">
           <v-layout>
-            <v-select :disabled="edit" :items="verses" v-model="selectedSurahStart" label="Surah Mula"></v-select>
-            <v-select :disabled="edit" :items="selectedSurahStartTotalAyat" v-model="selectedNumberAyatStart" label="no ayat Mula"></v-select>
-            <v-select :disabled="edit" :items="versesEnd" v-model="selectedSurahEnd" label="Surah Akhir"></v-select>
-            <v-select :disabled="edit" :items="selectedSurahEndTotalAyat" v-model="selectedNumberAyatEnd" label="no Ayat Tamat"></v-select>
+            <v-select
+              :disabled="edit"
+              :items="verses"
+              v-model="selectedSurahStart"
+              label="Surah Mula"
+            ></v-select>
+            <v-select
+              :disabled="edit"
+              :items="selectedSurahStartTotalAyat"
+              v-model="selectedNumberAyatStart"
+              label="no ayat Mula"
+            ></v-select>
+            <v-select
+              :disabled="edit"
+              :items="versesEnd"
+              v-model="selectedSurahEnd"
+              label="Surah Akhir"
+            ></v-select>
+            <v-select
+              :disabled="edit"
+              :items="selectedSurahEndTotalAyat"
+              v-model="selectedNumberAyatEnd"
+              label="no Ayat Tamat"
+            ></v-select>
           </v-layout>
           Jumlah Ayat : {{totalAyatTasmiq}}
           <v-layout row>
@@ -114,11 +142,18 @@
             <v-rating :readonly="edit" length="6" hover v-model="fiqhAyat"></v-rating>
           </v-layout>
           <v-divider></v-divider>
-          <v-text-field :disabled="edit" prepend-icon="note_add" label="ulasan" v-model="ulasan" maxlength="200"></v-text-field>
+          <v-text-field
+            :disabled="edit"
+            prepend-icon="note_add"
+            label="ulasan"
+            v-model="ulasan"
+            maxlength="200"
+          ></v-text-field>
           <v-layout justify-space-between>
-          <v-btn v-show="edit" @click="edit = false">Ubah</v-btn>
-          <h3 class="red--text">{{warningStatus}}</h3>
-          <v-btn :disabled="edit" @click="addMark" :loading="loading" class="success" >Hantar</v-btn></v-layout>
+            <v-btn v-show="edit" @click="edit = false">Ubah</v-btn>
+            <h3 class="red--text">{{warningStatus}}</h3>
+            <v-btn :disabled="edit" @click="addMark" :loading="loading" class="success">Hantar</v-btn>
+          </v-layout>
         </v-form>
       </v-card-text>
     </v-card>
@@ -134,24 +169,27 @@ export default {
   props: ["student"],
   data() {
     return {
-      warningStatus: '',
+      warningStatus: "",
       loading: false,
       dialog: false,
       edit: false,
-      today: new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10),//calculation tu untuk bg timezone xlari sebab offset
-      date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10),
+      today: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+        .toISOString()
+        .slice(0, 10), //calculation tu untuk bg timezone xlari sebab offset
+      date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+        .toISOString()
+        .slice(0, 10),
       selectedSurahStart: 1,
       selectedNumberAyatStart: 1,
       selectedSurahEnd: 1,
       selectedNumberAyatEnd: 1,
       totalMarkList: [],
-      fasohah:0,
-      hafazan:0,
-      tajwid:0,
-      fiqhAyat:0,
-      ulasan : "",
-      
-      
+      fasohah: 0,
+      hafazan: 0,
+      tajwid: 0,
+      fiqhAyat: 0,
+      ulasan: "",
+
       performingRequest: false,
       verses: [
         { text: "1.Al-Fatihah", totalVerses: 7, value: 1 },
@@ -272,7 +310,7 @@ export default {
     };
   },
   methods: {
-    totalAyatTasmiqUtkList(surahStart,surahEnd,ayatStart,ayatEnd) {
+    totalAyatTasmiqUtkList(surahStart, surahEnd, ayatStart, ayatEnd) {
       if (surahStart == surahEnd) {
         return ayatEnd - ayatStart + 1;
       } else {
@@ -293,143 +331,201 @@ export default {
       }
     },
     getTotalMarkList() {
-      let dbMarkYear = fb.db.collection("users").doc(this.student.key).collection("mark").doc(this.selectedYear)
-      dbMarkYear
-        .get()
-        .then((doc) => {
-          if (!doc.exists) {
-              console.log('year not exist')
-              this.totalMarkList=[]
-          }else{
-            dbMarkYear
-              .collection("bulan")
-              .doc(this.selectedMonth)
-              .get()
-              .then(snapshot => {
-                if (!snapshot.exists) {
-                  console.log('month not exist')
-                  this.totalMarkList=[]
-                } else {
-                    if (snapshot.data().mark) {
-                      this.totalMarkList = snapshot.data().mark;
-                      this.fasohah = parseInt(this.selectedDateMark.mark.slice(0,1)) 
-                      this.hafazan= parseInt(this.selectedDateMark.mark.slice(1,2)) 
-                      this.tajwid= parseInt(this.selectedDateMark.mark.slice(2,3)) 
-                      this.fiqhAyat= parseInt(this.selectedDateMark.mark.slice(3,4))
-                      this.ulasan = this.selectedDateMark.ulasan
-                      this.selectedSurahStart = parseInt(this.selectedDateMark.tasmiq.slice(0,3))
-                      this.selectedNumberAyatStart = parseInt(this.selectedDateMark.tasmiq.slice(3,6))
-                      this.selectedSurahEnd = parseInt(this.selectedDateMark.tasmiq.slice(6,9))
-                      this.selectedNumberAyatEnd = parseInt(this.selectedDateMark.tasmiq.slice(9,12))
-                    }
-                }
-                
-              });
-
-          }
-        })  
-
-
-
-    },
-    deleteMark(hari){
-      for( var i = 0; i <= this.totalMarkList.length-1; i++){ 
-        if ( this.totalMarkList[i].tarikh == hari) {
-          this.totalMarkList.splice(i, 1); 
-           fb.db
+      let dbMarkYear = fb.db
         .collection("users")
         .doc(this.student.key)
         .collection("mark")
-        .doc(this.selectedYear)
-        .collection("bulan")
-        .doc(this.selectedMonth)
-        .set({ mark: this.totalMarkList },{merge:true})
+        .doc(this.selectedYear);
+      dbMarkYear.get().then(doc => {
+        if (!doc.exists) {
+          console.log("year not exist");
+          this.totalMarkList = [];
+        } else {
+          dbMarkYear
+            .collection("bulan")
+            .doc(this.selectedMonth)
+            .get()
+            .then(snapshot => {
+              if (!snapshot.exists) {
+                console.log("month not exist");
+                this.totalMarkList = [];
+              } else {
+                if (snapshot.data().mark) {
+                  this.totalMarkList = snapshot.data().mark;
+                  this.fasohah = parseInt(
+                    this.selectedDateMark.mark.slice(0, 1)
+                  );
+                  this.hafazan = parseInt(
+                    this.selectedDateMark.mark.slice(1, 2)
+                  );
+                  this.tajwid = parseInt(
+                    this.selectedDateMark.mark.slice(2, 3)
+                  );
+                  this.fiqhAyat = parseInt(
+                    this.selectedDateMark.mark.slice(3, 4)
+                  );
+                  this.ulasan = this.selectedDateMark.ulasan;
+                  this.selectedSurahStart = parseInt(
+                    this.selectedDateMark.tasmiq.slice(0, 3)
+                  );
+                  this.selectedNumberAyatStart = parseInt(
+                    this.selectedDateMark.tasmiq.slice(3, 6)
+                  );
+                  this.selectedSurahEnd = parseInt(
+                    this.selectedDateMark.tasmiq.slice(6, 9)
+                  );
+                  this.selectedNumberAyatEnd = parseInt(
+                    this.selectedDateMark.tasmiq.slice(9, 12)
+                  );
+                }
+              }
+            });
+        }
+      });
+    },
+    deleteMark(hari) {
+      for (var i = 0; i <= this.totalMarkList.length - 1; i++) {
+        if (this.totalMarkList[i].tarikh == hari) {
+          this.totalMarkList.splice(i, 1);
+          fb.db
+            .collection("users")
+            .doc(this.student.key)
+            .collection("mark")
+            .doc(this.selectedYear)
+            .collection("bulan")
+            .doc(this.selectedMonth)
+            .set({ mark: this.totalMarkList }, { merge: true });
         }
       }
-      
     },
     addMark() {
-      function kira(value){
-        if(value <100){
-          if(value <10){
-            return "00"+value.toString()
-            }else{
-              return "0" + value.toString()
-              }
-        }else{
-          return value.toString()
+      function kira(value) {
+        if (value < 100) {
+          if (value < 10) {
+            return "00" + value.toString();
+          } else {
+            return "0" + value.toString();
           }
+        } else {
+          return value.toString();
+        }
       }
-      if(this.fasohah <1 || this.hafazan <1 || this.tajwid <1 || this.fiqhAyat <1){
-        this.warningStatus= 'pastikan markah di isi lengkap'
-      }else{
-      this.warningStatus = ''
-      this.loading = true
-      let convertTasmiq = kira(this.selectedSurahStart) + kira(this.selectedNumberAyatStart) + kira(this.selectedSurahEnd) + kira(this.selectedNumberAyatEnd)
-      let convertMark = this.fasohah.toString() + this.hafazan.toString() + this.tajwid.toString() + this.fiqhAyat.toString()
-      
-      if(this.totalMarkList.filter(date => date.tarikh === this.date.slice(8, 10))[0]){
-        this.totalMarkList[this.totalMarkList.findIndex(x => x.tarikh == this.date.slice(8, 10))] = {tarikh: this.date.slice(8, 10),ulasan : this.ulasan,mark: convertMark,tasmiq: convertTasmiq}
-      }else{
-        this.totalMarkList.unshift({tarikh: this.date.slice(8, 10),ulasan : this.ulasan,mark: convertMark,tasmiq: convertTasmiq})
-        this.totalMarkList.sort((a, b) => (a.tarikh - b.tarikh))
-      }
-      fb.db
-        .collection("users")
-        .doc(this.student.key)
-        .collection("mark")
-        .doc(this.selectedYear)
-        .set({},{merge:true})
+      if (
+        this.fasohah < 1 ||
+        this.hafazan < 1 ||
+        this.tajwid < 1 ||
+        this.fiqhAyat < 1
+      ) {
+        this.warningStatus = "pastikan markah di isi lengkap";
+      } else {
+        this.warningStatus = "";
+        this.loading = true;
+        let convertTasmiq =
+          kira(this.selectedSurahStart) +
+          kira(this.selectedNumberAyatStart) +
+          kira(this.selectedSurahEnd) +
+          kira(this.selectedNumberAyatEnd);
+        let convertMark =
+          this.fasohah.toString() +
+          this.hafazan.toString() +
+          this.tajwid.toString() +
+          this.fiqhAyat.toString();
 
-      fb.db
-        .collection("users")
-        .doc(this.student.key)
-        .collection("mark")
-        .doc(this.selectedYear)
-        .collection("bulan")
-        .doc(this.selectedMonth)
-        .set({ mark: this.totalMarkList },{merge:true})
-        .then(()=>{
-          this.loading = false
-          this.dialog = false
-          this.date = this.today
-        })
-    }}
+        if (
+          this.totalMarkList.filter(
+            date => date.tarikh === this.date.slice(8, 10)
+          )[0]
+        ) {
+          this.totalMarkList[
+            this.totalMarkList.findIndex(
+              x => x.tarikh == this.date.slice(8, 10)
+            )
+          ] = {
+            tarikh: this.date.slice(8, 10),
+            ulasan: this.ulasan,
+            mark: convertMark,
+            tasmiq: convertTasmiq
+          };
+        } else {
+          this.totalMarkList.unshift({
+            tarikh: this.date.slice(8, 10),
+            ulasan: this.ulasan,
+            mark: convertMark,
+            tasmiq: convertTasmiq
+          });
+          this.totalMarkList.sort((a, b) => a.tarikh - b.tarikh);
+        }
+        fb.db
+          .collection("users")
+          .doc(this.student.key)
+          .collection("mark")
+          .doc(this.selectedYear)
+          .set({}, { merge: true });
+
+        fb.db
+          .collection("users")
+          .doc(this.student.key)
+          .collection("mark")
+          .doc(this.selectedYear)
+          .collection("bulan")
+          .doc(this.selectedMonth)
+          .set({ mark: this.totalMarkList }, { merge: true })
+          .then(() => {
+            this.loading = false;
+            this.dialog = false;
+            this.date = this.today;
+          });
+      }
+    }
   },
   watch: {
     watchMonthYear: function() {
       this.getTotalMarkList();
     },
-    date: function(){
-        this.warningStatus = ''
-        this.fasohah = parseInt(this.selectedDateMark.mark.slice(0,1)) 
-        this.hafazan = parseInt(this.selectedDateMark.mark.slice(1,2)) 
-        this.tajwid = parseInt(this.selectedDateMark.mark.slice(2,3))
-        this.fiqhAyat = parseInt(this.selectedDateMark.mark.slice(3,4))
-        this.ulasan = this.selectedDateMark.ulasan
-        this.selectedSurahStart = parseInt(this.selectedDateMark.tasmiq.slice(0,3))
-        this.selectedNumberAyatStart = parseInt(this.selectedDateMark.tasmiq.slice(3,6))
-        this.selectedSurahEnd = parseInt(this.selectedDateMark.tasmiq.slice(6,9))
-        this.selectedNumberAyatEnd = parseInt(this.selectedDateMark.tasmiq.slice(9,12))
-        if(this.date < this.today){
-         this.edit = true
-        }else{
-         this.edit = false
+    date: function() {
+      this.warningStatus = "";
+      this.fasohah = parseInt(this.selectedDateMark.mark.slice(0, 1));
+      this.hafazan = parseInt(this.selectedDateMark.mark.slice(1, 2));
+      this.tajwid = parseInt(this.selectedDateMark.mark.slice(2, 3));
+      this.fiqhAyat = parseInt(this.selectedDateMark.mark.slice(3, 4));
+      this.ulasan = this.selectedDateMark.ulasan;
+      this.selectedSurahStart = parseInt(
+        this.selectedDateMark.tasmiq.slice(0, 3)
+      );
+      this.selectedNumberAyatStart = parseInt(
+        this.selectedDateMark.tasmiq.slice(3, 6)
+      );
+      this.selectedSurahEnd = parseInt(
+        this.selectedDateMark.tasmiq.slice(6, 9)
+      );
+      this.selectedNumberAyatEnd = parseInt(
+        this.selectedDateMark.tasmiq.slice(9, 12)
+      );
+      if (this.date < this.today) {
+        this.edit = true;
+      } else {
+        this.edit = false;
       }
-    },
+    }
   },
   computed: {
     selectedDateMark: function() {
-      if(this.totalMarkList.filter(
-        date => date.tarikh === this.date.slice(8, 10)
-      )[0]){
-         return this.totalMarkList.filter(
-        date => date.tarikh === this.date.slice(8, 10)
-      )[0]
-      }else{
-        return {tasmiq: "001001001001",tarikh: this.date.slice(8,10),mark:'0000',ulasan:''}
+      if (
+        this.totalMarkList.filter(
+          date => date.tarikh === this.date.slice(8, 10)
+        )[0]
+      ) {
+        return this.totalMarkList.filter(
+          date => date.tarikh === this.date.slice(8, 10)
+        )[0];
+      } else {
+        return {
+          tasmiq: "001001001001",
+          tarikh: this.date.slice(8, 10),
+          mark: "0000",
+          ulasan: ""
+        };
       }
-     
     },
     watchMonthYear: function() {
       return this.date.slice(0, 7);
@@ -441,24 +537,7 @@ export default {
       return this.date.slice(5, 7);
     },
     totalAyatTasmiq: function() {
-      if (this.selectedSurahStart == this.selectedSurahEnd) {
-        return this.selectedNumberAyatEnd - this.selectedNumberAyatStart + 1;
-      } else {
-        var totalAyatOfAllSurah = 0;
-        let x = this.selectedSurahStart;
-        while (x < this.selectedSurahEnd) {
-          totalAyatOfAllSurah += this.verses[x - 1].totalVerses;
-          x++;
-        }
-        return (
-          this.verses[this.selectedSurahStart - 1].totalVerses -
-          this.selectedNumberAyatStart +
-          1 +
-          this.selectedNumberAyatEnd +
-          totalAyatOfAllSurah -
-          this.verses[this.selectedSurahStart - 1].totalVerses
-        );
-      }
+      return this.totalAyatTasmiqUtkList(this.selectedSurahStart, this.selectedSurahEnd, this.selectedSurahStart, this.selectedNumberAyatEnd)
     },
     selectedSurahStartTotalAyat: function() {
       //code bawah ni utk generate array mengikut nilai yang ditetapkan
@@ -492,6 +571,4 @@ export default {
     }
   }
 };
-
-
 </script>
