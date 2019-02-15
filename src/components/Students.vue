@@ -66,7 +66,15 @@
         </v-flex>
         <v-flex xs2 sm4 md2>
           <div>
-            <Tasmiq v-bind:student="student"/>
+            <v-btn
+              @click="resolveShowTasmiq(student.ic)"
+              round
+              small
+              class="white--text my-2 caption success"
+            >TASMIQ</v-btn>
+            <div v-if="showTasmiq == student.ic">
+              <Tasmiq v-bind:student="student"/>
+            </div>
           </div>
         </v-flex>
       </v-layout>
@@ -82,13 +90,13 @@
 </template>
 <script>
 import { mapState } from "vuex";
-import Tasmiq from "./Tasmiq";
 const fb = require("../firebaseConfig.js");
 
 export default {
-  components: { Tasmiq },
+  components: { Tasmiq: () => import("./Tasmiq") },
   data() {
     return {
+      showTasmiq: false,
       snack: false,
       snackMsg: "",
       signupForm: {
@@ -113,6 +121,16 @@ export default {
     ...mapState(["studentDataList", "currentGroup", "noStudent", "studentList"])
   },
   methods: {
+    resolveShowTasmiq(x){
+      if(this.showTasmiq == x){
+        this.showTasmiq = null
+        //kena klik 2 kali baru keluar dialog,sebab data showtasmiq = student.ic,v-dialog dh off,tpi showtasmiq still sama nilai,kena cari jalan untuk trigger blik
+        //kena cari cara untuk showTasmiq jd null bila v-dialog/dialog = false
+      }
+      else{
+        this.showTasmiq = x
+      }
+    },
     registerNewStudent() {
       if (this.$refs.formNewStudent.validate()) {
         this.performingRequest = true;

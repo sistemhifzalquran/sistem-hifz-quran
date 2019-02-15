@@ -1,6 +1,5 @@
 <template>
   <v-dialog v-model="dialog" max-width="800px">
-    <v-btn slot="activator" round small class="white--text my-2 caption success">TASMIQ</v-btn>
     <v-card>
       <v-card-title>
         <v-layout justify-space-between>
@@ -52,7 +51,7 @@
                   >{{parseInt(item.tasmiq.slice(6,9))}}.{{parseInt(item.tasmiq.slice(9,12))}}</v-flex>
                   <v-flex
                     xs1
-                  >{{totalAyatTasmiqUtkList(parseInt(item.tasmiq.slice(0,3)),parseInt(item.tasmiq.slice(6,9)),parseInt(item.tasmiq.slice(3,6)),parseInt(item.tasmiq.slice(9,12)))}}</v-flex>
+                  >{{getTotalAyatTasmiq(parseInt(item.tasmiq.slice(0,3)),parseInt(item.tasmiq.slice(6,9)),parseInt(item.tasmiq.slice(3,6)),parseInt(item.tasmiq.slice(9,12)))}}</v-flex>
                   <v-flex xs2>
                     <v-layout row>
                       <v-flex xs3>{{parseInt(item.mark.slice(0,1))}}</v-flex>
@@ -171,7 +170,7 @@ export default {
     return {
       warningStatus: "",
       loading: false,
-      dialog: false,
+      dialog: true,
       edit: false,
       today: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
         .toISOString()
@@ -310,7 +309,7 @@ export default {
     };
   },
   methods: {
-    totalAyatTasmiqUtkList(surahStart, surahEnd, ayatStart, ayatEnd) {
+    getTotalAyatTasmiq(surahStart, surahEnd, ayatStart, ayatEnd) {
       if (surahStart == surahEnd) {
         return ayatEnd - ayatStart + 1;
       } else {
@@ -472,8 +471,7 @@ export default {
           .set({ mark: this.totalMarkList }, { merge: true })
           .then(() => {
             this.loading = false;
-            this.dialog = false;
-            this.date = this.today;
+            this.edit = true;
           });
       }
     }
@@ -537,7 +535,7 @@ export default {
       return this.date.slice(5, 7);
     },
     totalAyatTasmiq: function() {
-      return this.totalAyatTasmiqUtkList(this.selectedSurahStart, this.selectedSurahEnd, this.selectedSurahStart, this.selectedNumberAyatEnd)
+      return this.getTotalAyatTasmiq(this.selectedSurahStart, this.selectedSurahEnd, this.selectedSurahStart, this.selectedNumberAyatEnd)
     },
     selectedSurahStartTotalAyat: function() {
       //code bawah ni utk generate array mengikut nilai yang ditetapkan
