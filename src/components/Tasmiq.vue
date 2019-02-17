@@ -16,7 +16,9 @@
                   <v-icon left>expand_more</v-icon>
                    <span>{{getMonth(parseInt(selectedMonth)-1)}}[{{totalDay[parseInt(selectedMonth)-1]}}]</span>
                   </v-btn>
-                  <v-list v-for="(totalDayInMonth, index) in totalDay" :key="index">{{getMonth(index)}}[{{totalDayInMonth}}]</v-list>
+                  <v-list><v-list-tile v-for="(totalDayInMonth, index) in totalDay" :key="index" @click="changeSelectedMonth(index)">
+                     <v-list-tile-title>{{getMonth(index)}}[{{totalDayInMonth}}]</v-list-tile-title>
+                  </v-list-tile></v-list>
                 </v-menu>
               </v-card-title>
               <v-card-text>
@@ -315,6 +317,13 @@ export default {
     };
   },
   methods: {
+    changeSelectedMonth(month){
+      function replaceRange(s, start, end, substitute) {
+         return s.substring(0, start) + substitute + s.substring(end);
+        }
+      let x = ['01','02','03','04','05','06','07','08','09','10','11','12']
+      this.date = replaceRange(this.date, 5, 7, x[month]);
+    },
     getMonth(index){
       let x = ['Januari','Febuari','Mac','April','Mei','Jun','Julai','Ogos','September','Oktober','November','Disember']
       return x[index]
