@@ -12,6 +12,12 @@
             <v-card>
               <v-card-title>
                 <h2>Senarai Tasmiq lepas Tahun {{selectedYear}}</h2>
+                <v-menu><v-btn flat slot="activator" color="grey">
+                  <v-icon left>expand_more</v-icon>
+                   <span>{{getMonth(parseInt(selectedMonth)-1)}}[{{totalDay[parseInt(selectedMonth)-1]}}]</span>
+                  </v-btn>
+                  <v-list v-for="(totalDayInMonth, index) in totalDay" :key="index">{{getMonth(index)}}[{{totalDayInMonth}}]</v-list>
+                </v-menu>
               </v-card-title>
               <v-card-text>
                 <v-layout justify-space-between row class="py-0">
@@ -188,7 +194,7 @@ export default {
       tajwid: 0,
       fiqhAyat: 0,
       ulasan: "",
-
+      totalDay: [],
       performingRequest: false,
       verses: [
         { text: "1.Al-Fatihah", totalVerses: 7, value: 1 },
@@ -309,6 +315,10 @@ export default {
     };
   },
   methods: {
+    getMonth(index){
+      let x = ['Januari','Febuari','Mac','April','Mei','Jun','Julai','Ogos','September','Oktober','November','Disember']
+      return x[index]
+    },
     getTotalAyatTasmiq(surahStart, surahEnd, ayatStart, ayatEnd) {
       if (surahStart == surahEnd) {
         return ayatEnd - ayatStart + 1;
@@ -339,7 +349,9 @@ export default {
         if (!doc.exists) {
           console.log("year not exist");
           this.totalMarkList = [];
+          this.totalDay - [];
         } else {
+          this.totalDay = doc.data().totalDay;
           dbMarkYear
             .collection("bulan")
             .doc(this.selectedMonth)
@@ -386,6 +398,13 @@ export default {
       for (var i = 0; i <= this.totalMarkList.length - 1; i++) {
         if (this.totalMarkList[i].tarikh == hari) {
           this.totalMarkList.splice(i, 1);
+          this.totalDay[parseInt(this.selectedMonth)-1] = this.totalMarkList.length;
+          fb.db
+            .collection("users")
+            .doc(this.student.key)
+            .collection("mark")
+            .doc(this.selectedYear)
+            .set({ totalDay: this.totalDay }, { merge: true });
           fb.db
             .collection("users")
             .doc(this.student.key)
@@ -453,13 +472,14 @@ export default {
             tasmiq: convertTasmiq
           });
           this.totalMarkList.sort((a, b) => a.tarikh - b.tarikh);
+          this.totalDay[parseInt(this.selectedMonth)-1] = this.totalMarkList.length;
         }
         fb.db
           .collection("users")
           .doc(this.student.key)
           .collection("mark")
           .doc(this.selectedYear)
-          .set({}, { merge: true });
+          .set({totalDay:this.totalDay}, { merge: true });
 
         fb.db
           .collection("users")
