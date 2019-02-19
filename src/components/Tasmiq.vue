@@ -318,6 +318,7 @@ export default {
   },
   methods: {
     changeSelectedMonth(month){
+      this.totalMarkList = []
       function replaceRange(s, start, end, substitute) {
          return s.substring(0, start) + substitute + s.substring(end);
         }
@@ -422,6 +423,18 @@ export default {
             .collection("bulan")
             .doc(this.selectedMonth)
             .set({ mark: this.totalMarkList }, { merge: true });
+          if(this.date.slice(8, 10) == hari){
+              this.fasohah = 0;
+              this.hafazan = 0;
+              this.tajwid = 0;
+              this.fiqhAyat = 0;
+              this.ulasan = '';
+              this.selectedSurahStart = 1;
+              this.selectedNumberAyatStart = 1;
+              this.selectedSurahEnd = 1;
+              this.selectedNumberAyatEnd = 1;
+              this.edit = true;
+          }
         }
       }
     },
