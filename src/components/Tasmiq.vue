@@ -358,7 +358,7 @@ export default {
         if (!doc.exists) {
           console.log("year not exist");
           this.totalMarkList = [];
-          this.totalDay - [];
+          this.totalDay = ['0','0','0','0','0','0','0','0','0','0','0','0'];
         } else {
           this.totalDay = doc.data().totalDay;
           dbMarkYear
