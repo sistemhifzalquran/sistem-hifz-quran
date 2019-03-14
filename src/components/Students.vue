@@ -44,6 +44,20 @@
       </v-list>
     </v-menu>
 
+    <v-menu offset-y>
+      <v-btn slot="activator" flat color="grey">
+        <v-icon left>expand_more</v-icon>
+        <span>Urus Tasmiq</span>
+      </v-btn>
+      <v-list>
+        <v-list-tile @click="showStudentsTasmiqTarget = !showStudentsTasmiqTarget">
+          <v-list-tile-title>Urus Silibus</v-list-tile-title>
+        </v-list-tile>
+      </v-list>
+    </v-menu>
+    <div v-if="showStudentsTasmiqTarget == true">
+      <StudentsTasmiqTarget/>
+    </div>
     <v-card flat v-for="student in studentDataList" :key="student.ic">
       <v-layout row wrap class="pa-3">
         <v-flex xs12 md6>
@@ -93,9 +107,13 @@ import { mapState } from "vuex";
 const fb = require("../firebaseConfig.js");
 
 export default {
-  components: { Tasmiq: () => import("./Tasmiq") },
+  components: {
+    Tasmiq: () => import("./Tasmiq"),
+    StudentsTasmiqTarget: () => import("./StudentsTasmiqTarget")
+  },
   data() {
     return {
+      showStudentsTasmiqTarget: false,
       showTasmiq: false,
       snack: false,
       snackMsg: "",
@@ -121,14 +139,13 @@ export default {
     ...mapState(["studentDataList", "currentGroup", "noStudent", "studentList"])
   },
   methods: {
-    resolveShowTasmiq(x){
-      if(this.showTasmiq == x){
-        this.showTasmiq = null
+    resolveShowTasmiq(x) {
+      if (this.showTasmiq == x) {
+        this.showTasmiq = null;
         //kena klik 2 kali baru keluar dialog,sebab data showtasmiq = student.ic,v-dialog dh off,tpi showtasmiq still sama nilai,kena cari jalan untuk trigger blik
         //kena cari cara untuk showTasmiq jd null bila v-dialog/dialog = false
-      }
-      else{
-        this.showTasmiq = x
+      } else {
+        this.showTasmiq = x;
       }
     },
     registerNewStudent() {
@@ -159,7 +176,7 @@ export default {
                   .doc(credential.user.uid)
                   .collection("mark")
                   .doc(new Date().toISOString().slice(0, 4))
-                  .set({totalDay:[0,0,0,0,0,0,0,0,0,0,0,0]});
+                  .set({ totalDay: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] });
                 this.studentDataList.push({
                   status: 0,
                   mark: 0,

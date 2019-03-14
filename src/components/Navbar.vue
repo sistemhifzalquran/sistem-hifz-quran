@@ -86,7 +86,7 @@ export default {
         fb.db
           .collection("group")
           .doc(this.newGroupName)
-          .set({ timeline: [], students: [] })
+          .set({ timeline: [], students: [] , targetTasmiq:[]})
           .then(() => {
             this.$store.dispatch("pickNewCurrentGroup", this.newGroupName),
               (this.performingRequest = false),

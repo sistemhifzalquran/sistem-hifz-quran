@@ -13,6 +13,7 @@ function initialState() {
     currentUser: null,
     userProfile: {},
     noStudent: true,
+    targetTasmiq:[],
   }
 }
 export default new Vuex.Store({
@@ -42,6 +43,9 @@ export default new Vuex.Store({
     },
     onCreatedStudentList: (state, snapshot) => {
       state.studentList = snapshot;
+    },
+    onCreatedTargetTasmiq: (state, snapshot) => {
+      state.targetTasmiq = snapshot;
     },
     onCreatedStudentDataList: (state, doc) => {
       var x = '';
@@ -95,6 +99,7 @@ export default new Vuex.Store({
                 context.state.studentDataList = [];
                 context.commit("onCreatedNewsList", snapshot.data().timeline)
                 context.commit("onCreatedStudentList", snapshot.data().students)
+                context.commit("onCreatedTargetTasmiq", snapshot.data().targetTasmiq)
                 snapshot.data().students.forEach(id => {
                   if (id != "") {
                     context.state.noStudent = false;
@@ -145,6 +150,7 @@ export default new Vuex.Store({
             .then(function (snapshot) {
               context.commit("onCreatedNewsList", snapshot.data().timeline)
               context.commit("onCreatedStudentList", snapshot.data().students)
+              context.commit("onCreatedTargetTasmiq", snapshot.data().targetTasmiq)
               snapshot.data().students.forEach(id => {
                 context.state.noStudent = false;
                 if (id != "") {
