@@ -1,8 +1,7 @@
 <template>
   <v-dialog v-model="dialog" max-width="800px">
     <v-card>
-      <v-card-title>Target Tasmiq {{targetTasmiq}} {{selectedMonth}}</v-card-title>
-      selectedmonthtasmiq:{{selectedMonthTasmiq}}
+      <v-card-title><h2>Silibus Tahun {{currentYear}}</h2>
       <v-menu>
         <v-btn flat slot="activator" color="grey">
           <v-icon left>expand_more</v-icon>
@@ -17,9 +16,10 @@
             <v-list-tile-title>{{monthList.bulan}}</v-list-tile-title>
           </v-list-tile>
         </v-list>
-      </v-menu>
+      </v-menu></v-card-title>
       <v-card-text>
-        <v-form class="text-xs-right">minggu 1:
+        <v-form class="text-xs-right">
+          minggu 1:
           <v-layout>
             <v-select :items="verses" v-model="selectedSurahStart1" label="Surah Mula"></v-select>
             <v-select
@@ -76,6 +76,7 @@
               label="no Ayat Tamat"
             ></v-select>
           </v-layout>
+          <v-btn @click="addTargetTasmiq" :loading="loading" class="success">Hantar</v-btn>
         </v-form>
       </v-card-text>
     </v-card>
@@ -83,9 +84,14 @@
 </template>
 <script>
 import { mapState } from "vuex";
+const fb = require("../firebaseConfig.js");
 export default {
   data() {
     return {
+      currentYear: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+        .toISOString()
+        .slice(0, 4),
+      loading: false,
       dialog: true,
       selectedMonth: 0,
       monthList: [
@@ -222,56 +228,175 @@ export default {
   },
   computed: {
     ...mapState(["currentGroup", "targetTasmiq"]),
-    selectedSurahStart1: function() {
-      return parseInt(this.selectedMonthTasmiq.month[this.selectedMonth].minggu1.slice(0, 3));
+    selectedSurahStart1: {
+      get:function(){
+        return parseInt(
+        this.selectedMonthTasmiq.month[this.selectedMonth].minggu1.slice(0, 3)
+      );
+      },
+      set:function(newValue){
+        this.selectedMonthTasmiq.month[this.selectedMonth].minggu1 = this.kira(newValue) + this.selectedMonthTasmiq.month[this.selectedMonth].minggu1.slice(3, 12)
+      }
+      
     },
-    selectedNumberAyatStart1: function() {
-      return parseInt(this.selectedMonthTasmiq.month[this.selectedMonth].minggu1.slice(3, 6));
+    selectedNumberAyatStart1: {
+      get:function(){
+        return parseInt(
+        this.selectedMonthTasmiq.month[this.selectedMonth].minggu1.slice(3, 6)
+      );
+      },
+      set:function(newValue){
+        this.selectedMonthTasmiq.month[this.selectedMonth].minggu1 = this.selectedMonthTasmiq.month[this.selectedMonth].minggu1.slice(0, 3) + this.kira(newValue) + this.selectedMonthTasmiq.month[this.selectedMonth].minggu1.slice(6, 12)
+      }
     },
-    selectedSurahEnd1:function() {
-      return parseInt(this.selectedMonthTasmiq.month[this.selectedMonth].minggu1.slice(6, 9));
+    selectedSurahEnd1: {
+      get:function(){
+        return parseInt(
+        this.selectedMonthTasmiq.month[this.selectedMonth].minggu1.slice(6, 9)
+      );
+      },
+      set:function(newValue){
+        this.selectedMonthTasmiq.month[this.selectedMonth].minggu1 = this.selectedMonthTasmiq.month[this.selectedMonth].minggu1.slice(0, 6) + this.kira(newValue) + this.selectedMonthTasmiq.month[this.selectedMonth].minggu1.slice(9, 12)
+      }
+      
     },
-    selectedNumberAyatEnd1:function() {
-      return parseInt(this.selectedMonthTasmiq.month[this.selectedMonth].minggu1.slice(9, 12));
-    },
-    selectedSurahStart2: function() {
-      return parseInt(this.selectedMonthTasmiq.month[this.selectedMonth].minggu2.slice(0, 3));
-    },
-    selectedNumberAyatStart2: function() {
-      return parseInt(this.selectedMonthTasmiq.month[this.selectedMonth].minggu2.slice(3, 6));
-    },
-    selectedSurahEnd2:function() {
-      return parseInt(this.selectedMonthTasmiq.month[this.selectedMonth].minggu2.slice(6, 9));
-    },
-    selectedNumberAyatEnd2:function() {
-      return parseInt(this.selectedMonthTasmiq.month[this.selectedMonth].minggu2.slice(9, 12));
-    },
-    selectedSurahStart3: function() {
-      return parseInt(this.selectedMonthTasmiq.month[this.selectedMonth].minggu3.slice(0, 3));
-    },
-    selectedNumberAyatStart3: function() {
-      return parseInt(this.selectedMonthTasmiq.month[this.selectedMonth].minggu3.slice(3, 6));
-    },
-    selectedSurahEnd3:function() {
-      return parseInt(this.selectedMonthTasmiq.month[this.selectedMonth].minggu3.slice(6, 9));
-    },
-    selectedNumberAyatEnd3:function() {
-      return parseInt(this.selectedMonthTasmiq.month[this.selectedMonth].minggu3.slice(9, 12));
-    },
-    selectedSurahStart4: function() {
-      return parseInt(this.selectedMonthTasmiq.month[this.selectedMonth].minggu4.slice(0, 3));
-    },
-    selectedNumberAyatStart4: function() {
-      return parseInt(this.selectedMonthTasmiq.month[this.selectedMonth].minggu4.slice(3, 6));
-    },
-    selectedSurahEnd4:function() {
-      return parseInt(this.selectedMonthTasmiq.month[this.selectedMonth].minggu4.slice(6, 9));
-    },
-    selectedNumberAyatEnd4:function() {
-      return parseInt(this.selectedMonthTasmiq.month[this.selectedMonth].minggu4.slice(9, 12));
+    selectedNumberAyatEnd1:{
+      get:function(){
+        return parseInt(
+        this.selectedMonthTasmiq.month[this.selectedMonth].minggu1.slice(9, 12)
+      );
+      },
+      set:function(newValue){
+          this.selectedMonthTasmiq.month[this.selectedMonth].minggu1 = this.selectedMonthTasmiq.month[this.selectedMonth].minggu1.slice(0, 9) + this.kira(newValue)
+      }
     },
 
-
+    selectedSurahStart2: {
+      get:function(){
+        return parseInt(
+        this.selectedMonthTasmiq.month[this.selectedMonth].minggu2.slice(0, 3)
+      );
+      },
+      set:function(newValue){
+        this.selectedMonthTasmiq.month[this.selectedMonth].minggu2 = this.kira(newValue) + this.selectedMonthTasmiq.month[this.selectedMonth].minggu2.slice(3, 12)
+      }
+      
+    },
+    selectedNumberAyatStart2: {
+      get:function(){
+        return parseInt(
+        this.selectedMonthTasmiq.month[this.selectedMonth].minggu2.slice(3, 6)
+      );
+      },
+      set:function(newValue){
+        this.selectedMonthTasmiq.month[this.selectedMonth].minggu2 = this.selectedMonthTasmiq.month[this.selectedMonth].minggu2.slice(0, 3) + this.kira(newValue) + this.selectedMonthTasmiq.month[this.selectedMonth].minggu2.slice(6, 12)
+      }
+    },
+    selectedSurahEnd2: {
+      get:function(){
+        return parseInt(
+        this.selectedMonthTasmiq.month[this.selectedMonth].minggu2.slice(6, 9)
+      );
+      },
+      set:function(newValue){
+        this.selectedMonthTasmiq.month[this.selectedMonth].minggu2 = this.selectedMonthTasmiq.month[this.selectedMonth].minggu2.slice(0, 6) + this.kira(newValue) + this.selectedMonthTasmiq.month[this.selectedMonth].minggu2.slice(9, 12)
+      }
+      
+    },
+    selectedNumberAyatEnd2:{
+      get:function(){
+        return parseInt(
+        this.selectedMonthTasmiq.month[this.selectedMonth].minggu2.slice(9, 12)
+      );
+      },
+      set:function(newValue){
+          this.selectedMonthTasmiq.month[this.selectedMonth].minggu2 = this.selectedMonthTasmiq.month[this.selectedMonth].minggu2.slice(0, 9) + this.kira(newValue)
+      }
+    },
+ selectedSurahStart3: {
+      get:function(){
+        return parseInt(
+        this.selectedMonthTasmiq.month[this.selectedMonth].minggu3.slice(0, 3)
+      );
+      },
+      set:function(newValue){
+        this.selectedMonthTasmiq.month[this.selectedMonth].minggu3 = this.kira(newValue) + this.selectedMonthTasmiq.month[this.selectedMonth].minggu3.slice(3, 12)
+      }
+      
+    },
+    selectedNumberAyatStart3: {
+      get:function(){
+        return parseInt(
+        this.selectedMonthTasmiq.month[this.selectedMonth].minggu3.slice(3, 6)
+      );
+      },
+      set:function(newValue){
+        this.selectedMonthTasmiq.month[this.selectedMonth].minggu3 = this.selectedMonthTasmiq.month[this.selectedMonth].minggu3.slice(0, 3) + this.kira(newValue) + this.selectedMonthTasmiq.month[this.selectedMonth].minggu3.slice(6, 12)
+      }
+    },
+    selectedSurahEnd3: {
+      get:function(){
+        return parseInt(
+        this.selectedMonthTasmiq.month[this.selectedMonth].minggu3.slice(6, 9)
+      );
+      },
+      set:function(newValue){
+        this.selectedMonthTasmiq.month[this.selectedMonth].minggu3 = this.selectedMonthTasmiq.month[this.selectedMonth].minggu3.slice(0, 6) + this.kira(newValue) + this.selectedMonthTasmiq.month[this.selectedMonth].minggu3.slice(9, 12)
+      }
+      
+    },
+    selectedNumberAyatEnd3:{
+      get:function(){
+        return parseInt(
+        this.selectedMonthTasmiq.month[this.selectedMonth].minggu3.slice(9, 12)
+      );
+      },
+      set:function(newValue){
+          this.selectedMonthTasmiq.month[this.selectedMonth].minggu3 = this.selectedMonthTasmiq.month[this.selectedMonth].minggu3.slice(0, 9) + this.kira(newValue)
+      }
+    },
+    selectedSurahStart4: {
+      get:function(){
+        return parseInt(
+        this.selectedMonthTasmiq.month[this.selectedMonth].minggu4.slice(0, 3)
+      );
+      },
+      set:function(newValue){
+        this.selectedMonthTasmiq.month[this.selectedMonth].minggu4 = this.kira(newValue) + this.selectedMonthTasmiq.month[this.selectedMonth].minggu4.slice(3, 12)
+      }
+      
+    },
+    selectedNumberAyatStart4: {
+      get:function(){
+        return parseInt(
+        this.selectedMonthTasmiq.month[this.selectedMonth].minggu4.slice(3, 6)
+      );
+      },
+      set:function(newValue){
+        this.selectedMonthTasmiq.month[this.selectedMonth].minggu4 = this.selectedMonthTasmiq.month[this.selectedMonth].minggu4.slice(0, 3) + this.kira(newValue) + this.selectedMonthTasmiq.month[this.selectedMonth].minggu4.slice(6, 12)
+      }
+    },
+    selectedSurahEnd4: {
+      get:function(){
+        return parseInt(
+        this.selectedMonthTasmiq.month[this.selectedMonth].minggu4.slice(6, 9)
+      );
+      },
+      set:function(newValue){
+        this.selectedMonthTasmiq.month[this.selectedMonth].minggu4 = this.selectedMonthTasmiq.month[this.selectedMonth].minggu4.slice(0, 6) + this.kira(newValue) + this.selectedMonthTasmiq.month[this.selectedMonth].minggu4.slice(9, 12)
+      }
+      
+    },
+    selectedNumberAyatEnd4:{
+      get:function(){
+        return parseInt(
+        this.selectedMonthTasmiq.month[this.selectedMonth].minggu4.slice(9, 12)
+      );
+      },
+      set:function(newValue){
+          this.selectedMonthTasmiq.month[this.selectedMonth].minggu4 = this.selectedMonthTasmiq.month[this.selectedMonth].minggu4.slice(0, 9) + this.kira(newValue)
+      }
+    },
 
     selectedMonthTasmiq: function() {
       if (
@@ -291,8 +416,82 @@ export default {
               .slice(0, 4)
         )[0];
       } else {
-        //jika tiada data,tambah data baru ikut tahun ke dalam targettasmiq
         return {
+          month: [
+            {
+              minggu1: "001001001001",
+              minggu2: "001001001001",
+              minggu3: "001001001001",
+              minggu4: "001001001001"
+            },
+            {
+              minggu1: "001001001001",
+              minggu2: "001001001001",
+              minggu3: "001001001001",
+              minggu4: "001001001001"
+            },
+            {
+              minggu1: "001001001001",
+              minggu2: "001001001001",
+              minggu3: "001001001001",
+              minggu4: "001001001001"
+            },
+            {
+              minggu1: "001001001001",
+              minggu2: "001001001001",
+              minggu3: "001001001001",
+              minggu4: "001001001001"
+            },
+            {
+              minggu1: "001001001001",
+              minggu2: "001001001001",
+              minggu3: "001001001001",
+              minggu4: "001001001001"
+            },
+            {
+              minggu1: "001001001001",
+              minggu2: "001001001001",
+              minggu3: "001001001001",
+              minggu4: "001001001001"
+            },
+            {
+              minggu1: "001001001001",
+              minggu2: "001001001001",
+              minggu3: "001001001001",
+              minggu4: "001001001001"
+            },
+            {
+              minggu1: "001001001001",
+              minggu2: "001001001001",
+              minggu3: "001001001001",
+              minggu4: "001001001001"
+            },
+            {
+              minggu1: "001001001001",
+              minggu2: "001001001001",
+              minggu3: "001001001001",
+              minggu4: "001001001001"
+            },
+            {
+              minggu1: "001001001001",
+              minggu2: "001001001001",
+              minggu3: "001001001001",
+              minggu4: "001001001001"
+            },
+            {
+              minggu1: "001001001001",
+              minggu2: "001001001001",
+              minggu3: "001001001001",
+              minggu4: "001001001001"
+            },
+            {
+              minggu1: "001001001001",
+              minggu2: "001001001001",
+              minggu3: "001001001001",
+              minggu4: "001001001001"
+            }
+          ],
+          year: this.currentYear
         };
       }
     },
@@ -351,6 +550,34 @@ export default {
   },
 
   methods: {
+    kira(value) {
+        if (value < 100) {
+          if (value < 10) {
+            return "00" + value.toString();
+          } else {
+            return "0" + value.toString();
+          }
+        } else {
+          return value.toString();
+        }
+      },
+    addTargetTasmiq() {
+      this.loading = true;
+      if (this.targetTasmiq.filter(data => data.year === this.currentYear)[0]) {
+        this.targetTasmiq[
+          this.targetTasmiq.findIndex(x => x.year == this.currentYear)
+        ] = this.selectedMonthTasmiq;
+      } else {
+        this.targetTasmiq.unshift(this.selectedMonthTasmiq);
+      }
+      fb.db
+        .collection("group")
+        .doc(this.currentGroup)
+        .set({ targetTasmiq: this.targetTasmiq }, { merge: true })
+        .then(() => {
+          this.loading = false;
+        });
+    },
     getMonth(index) {
       return this.monthList[index].bulan;
     },
