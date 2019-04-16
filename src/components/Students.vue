@@ -71,11 +71,15 @@
         <v-flex xs6 sm4 md2>
           <div>
             <v-btn
+              @click="resolveShowPrestasi(student.ic)"
               round
               small
               :color="`${student.status}`"
               class="white--text my-2 caption"
             >{{student.mark}}%</v-btn>
+            <div v-if="showPrestasi == student.ic">
+              <Prestasi v-bind:student="student"/>
+            </div>
           </div>
         </v-flex>
         <v-flex xs2 sm4 md2>
@@ -108,6 +112,7 @@ const fb = require("../firebaseConfig.js");
 
 export default {
   components: {
+    Prestasi: () => import("./Prestasi"),
     Tasmiq: () => import("./Tasmiq"),
     StudentsTasmiqTarget: () => import("./StudentsTasmiqTarget")
   },
@@ -115,6 +120,7 @@ export default {
     return {
       showStudentsTasmiqTarget: false,
       showTasmiq: false,
+      showPrestasi: false,
       snack: false,
       snackMsg: "",
       signupForm: {
@@ -146,6 +152,15 @@ export default {
         //kena cari cara untuk showTasmiq jd null bila v-dialog/dialog = false
       } else {
         this.showTasmiq = x;
+      }
+    },
+    resolveShowPrestasi(x) {
+      if (this.showPrestasi == x) {
+        this.showPrestasi = null;
+        //kena klik 2 kali baru keluar dialog,sebab data showtasmiq = student.ic,v-dialog dh off,tpi showtasmiq still sama nilai,kena cari jalan untuk trigger blik
+        //kena cari cara untuk showTasmiq jd null bila v-dialog/dialog = false
+      } else {
+        this.showPrestasi = x;
       }
     },
     registerNewStudent() {
