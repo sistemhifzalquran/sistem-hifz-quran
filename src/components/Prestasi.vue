@@ -1,12 +1,30 @@
 <template>
   <v-dialog v-model="dialog" max-width="800px">
     <v-card>
-      <v-card-title>Prestasi {{student.name}} Tahun {{selectedYear}}</v-card-title>
-      <line-chart :data="tasmiqData"></line-chart>
+      <v-card-title>
+        <h2>Prestasi {{student.name}} Tahun {{selectedYear}}</h2>
+        <v-menu>
+          <v-btn flat slot="activator" color="grey">
+            <v-icon left>expand_more</v-icon>
+            <span>{{getMonth(parseInt(selectedMonth)-1)}}[{{totalDay[parseInt(selectedMonth)-1]}}]</span>
+          </v-btn>
+          <v-list>
+            <v-list-tile
+              v-for="(totalDayInMonth, index) in totalDay"
+              :key="index"
+              @click="changeSelectedMonth(index)"
+            >
+              <v-list-tile-title>{{getMonth(index)}}[{{totalDayInMonth}}]</v-list-tile-title>
+            </v-list-tile>
+          </v-list>
+        </v-menu>
+      </v-card-title>
+      <line-chart xtitle="Haribulan" ytitle="Jumlah Ayat" :data="tasmiqData"></line-chart>
     </v-card>
   </v-dialog>
 </template>
 <script>
+import { mapState } from "vuex";
 const fb = require("../firebaseConfig.js");
 export default {
   created() {
@@ -267,21 +285,278 @@ export default {
     }
   },
   computed: {
+    ...mapState(["targetTasmiq"]),
+    selectedMonthTasmiq: function() {
+      if (
+        this.targetTasmiq.filter(
+          snapshot =>
+            snapshot.year ===
+            new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+              .toISOString()
+              .slice(0, 4)
+        )[0]
+      ) {
+        return this.targetTasmiq.filter(
+          snapshot =>
+            snapshot.year ===
+            new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+              .toISOString()
+              .slice(0, 4)
+        )[0];
+      } else {
+        return {
+          month: [
+            {
+              minggu1: "001001001001",
+              minggu2: "001001001001",
+              minggu3: "001001001001",
+              minggu4: "001001001001"
+            },
+            {
+              minggu1: "001001001001",
+              minggu2: "001001001001",
+              minggu3: "001001001001",
+              minggu4: "001001001001"
+            },
+            {
+              minggu1: "001001001001",
+              minggu2: "001001001001",
+              minggu3: "001001001001",
+              minggu4: "001001001001"
+            },
+            {
+              minggu1: "001001001001",
+              minggu2: "001001001001",
+              minggu3: "001001001001",
+              minggu4: "001001001001"
+            },
+            {
+              minggu1: "001001001001",
+              minggu2: "001001001001",
+              minggu3: "001001001001",
+              minggu4: "001001001001"
+            },
+            {
+              minggu1: "001001001001",
+              minggu2: "001001001001",
+              minggu3: "001001001001",
+              minggu4: "001001001001"
+            },
+            {
+              minggu1: "001001001001",
+              minggu2: "001001001001",
+              minggu3: "001001001001",
+              minggu4: "001001001001"
+            },
+            {
+              minggu1: "001001001001",
+              minggu2: "001001001001",
+              minggu3: "001001001001",
+              minggu4: "001001001001"
+            },
+            {
+              minggu1: "001001001001",
+              minggu2: "001001001001",
+              minggu3: "001001001001",
+              minggu4: "001001001001"
+            },
+            {
+              minggu1: "001001001001",
+              minggu2: "001001001001",
+              minggu3: "001001001001",
+              minggu4: "001001001001"
+            },
+            {
+              minggu1: "001001001001",
+              minggu2: "001001001001",
+              minggu3: "001001001001",
+              minggu4: "001001001001"
+            },
+            {
+              minggu1: "001001001001",
+              minggu2: "001001001001",
+              minggu3: "001001001001",
+              minggu4: "001001001001"
+            }
+          ],
+          year: this.currentYear
+        };
+      }
+    },
     tasmiqData: function() {
-      let x = [[0,0]];
+      let x = { name: "Tasmiq", data: {} };
+      let lastTotal = 0;
       this.totalMarkList.forEach(item => {
-        x.push([
-          item.tarikh,
-          x[x.length -1][1] +
+        let y =
+          lastTotal +
           this.getTotalAyatTasmiq(
             parseInt(item.tasmiq.slice(0, 3)),
             parseInt(item.tasmiq.slice(6, 9)),
             parseInt(item.tasmiq.slice(3, 6)),
             parseInt(item.tasmiq.slice(9, 12))
-          )
-        ]);
+          );
+        x.data[parseInt(item.tarikh)] = y;
+        lastTotal = y;
       });
-      return x;
+      return [{name: "haribulan",data:{0:0,1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0,10:0,11:0,12:0,13:0,14:0,15:0,16:0,17:0,18:0,19:0,20:0,21:0,22:0,23:0,24:0,25:0,26:0,27:0,28:0}},this.targetTasmiqData, x];
+    },
+    targetTasmiqData: function() {
+      return {
+        name: "Target Tasmiq",
+        data: {
+          7: this.minggu1.totalAyat,
+          14: this.minggu1.totalAyat + this.minggu2.totalAyat,
+          21:
+            this.minggu1.totalAyat +
+            this.minggu2.totalAyat +
+            this.minggu3.totalAyat,
+          28:
+            this.minggu1.totalAyat +
+            this.minggu2.totalAyat +
+            this.minggu3.totalAyat +
+            this.minggu4.totalAyat
+        }
+      };
+    },
+    minggu1: function() {
+      let surahStart = parseInt(
+        this.selectedMonthTasmiq.month[
+          parseInt(this.selectedMonth) - 1
+        ].minggu1.slice(0, 3)
+      );
+      let ayatStart = parseInt(
+        this.selectedMonthTasmiq.month[
+          parseInt(this.selectedMonth) - 1
+        ].minggu1.slice(3, 6)
+      );
+      let surahEnd = parseInt(
+        this.selectedMonthTasmiq.month[
+          parseInt(this.selectedMonth) - 1
+        ].minggu1.slice(6, 9)
+      );
+      let ayatEnd = parseInt(
+        this.selectedMonthTasmiq.month[
+          parseInt(this.selectedMonth) - 1
+        ].minggu1.slice(9, 12)
+      );
+      let totalAyat = this.getTotalAyatTasmiq(
+        surahStart,
+        surahEnd,
+        ayatStart,
+        ayatEnd
+      );
+      return {
+        totalAyat: totalAyat,
+        suratStart: surahStart,
+        ayatStart: ayatStart,
+        surahEnd: surahEnd,
+        ayatEnd: ayatEnd
+      };
+    },
+    minggu2: function() {
+      let surahStart = parseInt(
+        this.selectedMonthTasmiq.month[
+          parseInt(this.selectedMonth) - 1
+        ].minggu2.slice(0, 3)
+      );
+      let ayatStart = parseInt(
+        this.selectedMonthTasmiq.month[
+          parseInt(this.selectedMonth) - 1
+        ].minggu2.slice(3, 6)
+      );
+      let surahEnd = parseInt(
+        this.selectedMonthTasmiq.month[
+          parseInt(this.selectedMonth) - 1
+        ].minggu2.slice(6, 9)
+      );
+      let ayatEnd = parseInt(
+        this.selectedMonthTasmiq.month[
+          parseInt(this.selectedMonth) - 1
+        ].minggu2.slice(9, 12)
+      );
+      let totalAyat = this.getTotalAyatTasmiq(
+        surahStart,
+        surahEnd,
+        ayatStart,
+        ayatEnd
+      );
+      return {
+        totalAyat: totalAyat,
+        suratStart: surahStart,
+        ayatStart: ayatStart,
+        surahEnd: surahEnd,
+        ayatEnd: ayatEnd
+      };
+    },
+    minggu3: function() {
+      let surahStart = parseInt(
+        this.selectedMonthTasmiq.month[
+          parseInt(this.selectedMonth) - 1
+        ].minggu3.slice(0, 3)
+      );
+      let ayatStart = parseInt(
+        this.selectedMonthTasmiq.month[
+          parseInt(this.selectedMonth) - 1
+        ].minggu3.slice(3, 6)
+      );
+      let surahEnd = parseInt(
+        this.selectedMonthTasmiq.month[
+          parseInt(this.selectedMonth) - 1
+        ].minggu3.slice(6, 9)
+      );
+      let ayatEnd = parseInt(
+        this.selectedMonthTasmiq.month[
+          parseInt(this.selectedMonth) - 1
+        ].minggu3.slice(9, 12)
+      );
+      let totalAyat = this.getTotalAyatTasmiq(
+        surahStart,
+        surahEnd,
+        ayatStart,
+        ayatEnd
+      );
+      return {
+        totalAyat: totalAyat,
+        suratStart: surahStart,
+        ayatStart: ayatStart,
+        surahEnd: surahEnd,
+        ayatEnd: ayatEnd
+      };
+    },
+    minggu4: function() {
+      let surahStart = parseInt(
+        this.selectedMonthTasmiq.month[
+          parseInt(this.selectedMonth) - 1
+        ].minggu4.slice(0, 3)
+      );
+      let ayatStart = parseInt(
+        this.selectedMonthTasmiq.month[
+          parseInt(this.selectedMonth) - 1
+        ].minggu4.slice(3, 6)
+      );
+      let surahEnd = parseInt(
+        this.selectedMonthTasmiq.month[
+          parseInt(this.selectedMonth) - 1
+        ].minggu4.slice(6, 9)
+      );
+      let ayatEnd = parseInt(
+        this.selectedMonthTasmiq.month[
+          parseInt(this.selectedMonth) - 1
+        ].minggu4.slice(9, 12)
+      );
+      let totalAyat = this.getTotalAyatTasmiq(
+        surahStart,
+        surahEnd,
+        ayatStart,
+        ayatEnd
+      );
+      return {
+        totalAyat: totalAyat,
+        suratStart: surahStart,
+        ayatStart: ayatStart,
+        surahEnd: surahEnd,
+        ayatEnd: ayatEnd
+      };
     },
     selectedDateMark: function() {
       if (
