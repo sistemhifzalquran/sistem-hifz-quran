@@ -131,7 +131,6 @@
               label="no Ayat Tamat"
             ></v-select>
           </v-layout>
-
           Jumlah Ayat : {{totalAyatTasmiq}}
           <v-layout row>
             <h2 class="font-weight-regular pt-1">Fasohah</h2>
@@ -723,8 +722,4 @@ export default {
     }
   }
 };
-//todo = move totaltasmiq to level year sama ngn totalday n totalayat di dlm firestore
 </script>
-
-
-
