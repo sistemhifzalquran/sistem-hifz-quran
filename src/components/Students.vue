@@ -191,7 +191,7 @@ export default {
                   .doc(credential.user.uid)
                   .collection("mark")
                   .doc(new Date().toISOString().slice(0, 4))
-                  .set({ totalDay: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] });
+                  .set({ totalDay: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] ,totalAyat: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] });
                 this.studentDataList.push({
                   status: 0,
                   mark: 0,

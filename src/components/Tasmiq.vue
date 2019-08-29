@@ -12,13 +12,20 @@
             <v-card>
               <v-card-title>
                 <h2>Senarai Tasmiq lepas Tahun {{selectedYear}}</h2>
-                <v-menu><v-btn flat slot="activator" color="grey">
-                  <v-icon left>expand_more</v-icon>
-                   <span>{{getMonth(parseInt(selectedMonth)-1)}}[{{totalDay[parseInt(selectedMonth)-1]}}]</span>
+                <v-menu>
+                  <v-btn flat slot="activator" color="grey">
+                    <v-icon left>expand_more</v-icon>
+                    <span>{{getMonth(parseInt(selectedMonth)-1)}}[{{totalDay[parseInt(selectedMonth)-1]}}]</span>
                   </v-btn>
-                  <v-list><v-list-tile v-for="(totalDayInMonth, index) in totalDay" :key="index" @click="changeSelectedMonth(index)">
-                     <v-list-tile-title>{{getMonth(index)}}[{{totalDayInMonth}}]</v-list-tile-title>
-                  </v-list-tile></v-list>
+                  <v-list>
+                    <v-list-tile
+                      v-for="(totalDayInMonth, index) in totalDay"
+                      :key="index"
+                      @click="changeSelectedMonth(index)"
+                    >
+                      <v-list-tile-title>{{getMonth(index)}}[{{totalDayInMonth}}]</v-list-tile-title>
+                    </v-list-tile>
+                  </v-list>
                 </v-menu>
               </v-card-title>
               <v-card-text>
@@ -124,6 +131,7 @@
               label="no Ayat Tamat"
             ></v-select>
           </v-layout>
+
           Jumlah Ayat : {{totalAyatTasmiq}}
           <v-layout row>
             <h2 class="font-weight-regular pt-1">Fasohah</h2>
@@ -191,12 +199,14 @@ export default {
       selectedSurahEnd: 1,
       selectedNumberAyatEnd: 1,
       totalMarkList: [],
+      totalTasmiq: 0,
       fasohah: 0,
       hafazan: 0,
       tajwid: 0,
       fiqhAyat: 0,
       ulasan: "",
       totalDay: [],
+      totalAyat: [],
       performingRequest: false,
       verses: [
         { text: "1.Al-Fatihah", totalVerses: 7, value: 1 },
@@ -317,17 +327,43 @@ export default {
     };
   },
   methods: {
-    changeSelectedMonth(month){
-      this.totalMarkList = []
+    changeSelectedMonth(month) {
+      this.totalMarkList = [];
       function replaceRange(s, start, end, substitute) {
-         return s.substring(0, start) + substitute + s.substring(end);
-        }
-      let x = ['01','02','03','04','05','06','07','08','09','10','11','12']
+        return s.substring(0, start) + substitute + s.substring(end);
+      }
+      let x = [
+        "01",
+        "02",
+        "03",
+        "04",
+        "05",
+        "06",
+        "07",
+        "08",
+        "09",
+        "10",
+        "11",
+        "12"
+      ];
       this.date = replaceRange(this.date, 5, 7, x[month]);
     },
-    getMonth(index){
-      let x = ['Januari','Febuari','Mac','April','Mei','Jun','Julai','Ogos','September','Oktober','November','Disember']
-      return x[index]
+    getMonth(index) {
+      let x = [
+        "Januari",
+        "Febuari",
+        "Mac",
+        "April",
+        "Mei",
+        "Jun",
+        "Julai",
+        "Ogos",
+        "September",
+        "Oktober",
+        "November",
+        "Disember"
+      ];
+      return x[index];
     },
     getTotalAyatTasmiq(surahStart, surahEnd, ayatStart, ayatEnd) {
       if (surahStart == surahEnd) {
@@ -359,9 +395,25 @@ export default {
         if (!doc.exists) {
           console.log("year not exist");
           this.totalMarkList = [];
-          this.totalDay = ['0','0','0','0','0','0','0','0','0','0','0','0'];
+          this.totalTasmiq = 0;
+          this.totalDay = [
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0"
+          ];
+          this.totalAyat = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         } else {
           this.totalDay = doc.data().totalDay;
+          this.totalAyat = doc.data().totalAyat;
           dbMarkYear
             .collection("bulan")
             .doc(this.selectedMonth)
@@ -370,9 +422,23 @@ export default {
               if (!snapshot.exists) {
                 console.log("month not exist");
                 this.totalMarkList = [];
+                this.totalTasmiq = 0;
               } else {
                 if (snapshot.data().mark) {
                   this.totalMarkList = snapshot.data().mark;
+                  let c = 0;
+                  for (var i = 0; i <= this.totalMarkList.length - 1; i++) {
+                    let v = this.totalMarkList[i];
+                    let x = this.getTotalAyatTasmiq(
+                      parseInt(v.tasmiq.slice(0, 3)),
+                      parseInt(v.tasmiq.slice(6, 9)),
+                      parseInt(v.tasmiq.slice(3, 6)),
+                      parseInt(v.tasmiq.slice(9, 12))
+                    );
+                    c = c + x;
+                  }
+                  this.totalTasmiq = c;
+                  
                   this.fasohah = parseInt(
                     this.selectedDateMark.mark.slice(0, 1)
                   );
@@ -407,14 +473,28 @@ export default {
     deleteMark(hari) {
       for (var i = 0; i <= this.totalMarkList.length - 1; i++) {
         if (this.totalMarkList[i].tarikh == hari) {
+          let x = this.totalMarkList[i];
+          let totalTasmiqLama = this.getTotalAyatTasmiq(
+            parseInt(x.tasmiq.slice(0, 3)),
+            parseInt(x.tasmiq.slice(6, 9)),
+            parseInt(x.tasmiq.slice(3, 6)),
+            parseInt(x.tasmiq.slice(9, 12))
+          );
+          this.totalTasmiq = this.totalTasmiq - totalTasmiqLama;
           this.totalMarkList.splice(i, 1);
-          this.totalDay[parseInt(this.selectedMonth)-1] = this.totalMarkList.length;
+          this.totalDay[
+            parseInt(this.selectedMonth) - 1
+          ] = this.totalMarkList.length;
+          this.totalAyat[parseInt(this.selectedMonth) - 1] = this.totalTasmiq;
           fb.db
             .collection("users")
             .doc(this.student.key)
             .collection("mark")
             .doc(this.selectedYear)
-            .set({ totalDay: this.totalDay }, { merge: true });
+            .set(
+              { totalDay: this.totalDay, totalAyat: this.totalAyat },
+              { merge: true }
+            );
           fb.db
             .collection("users")
             .doc(this.student.key)
@@ -422,18 +502,21 @@ export default {
             .doc(this.selectedYear)
             .collection("bulan")
             .doc(this.selectedMonth)
-            .set({ mark: this.totalMarkList }, { merge: true });
-          if(this.date.slice(8, 10) == hari){
-              this.fasohah = 0;
-              this.hafazan = 0;
-              this.tajwid = 0;
-              this.fiqhAyat = 0;
-              this.ulasan = '';
-              this.selectedSurahStart = 1;
-              this.selectedNumberAyatStart = 1;
-              this.selectedSurahEnd = 1;
-              this.selectedNumberAyatEnd = 1;
-              this.edit = true;
+            .set(
+              { mark: this.totalMarkList, totalTasmiq: this.totalTasmiq },
+              { merge: true }
+            );
+          if (this.date.slice(8, 10) == hari) {
+            this.fasohah = 0;
+            this.hafazan = 0;
+            this.tajwid = 0;
+            this.fiqhAyat = 0;
+            this.ulasan = "";
+            this.selectedSurahStart = 1;
+            this.selectedNumberAyatStart = 1;
+            this.selectedSurahEnd = 1;
+            this.selectedNumberAyatEnd = 1;
+            this.edit = true;
           }
         }
       }
@@ -476,6 +559,20 @@ export default {
             date => date.tarikh === this.date.slice(8, 10)
           )[0]
         ) {
+          let x = this.totalMarkList[
+            this.totalMarkList.findIndex(
+              x => x.tarikh == this.date.slice(8, 10)
+            )
+          ];
+          let totalTasmiqLama = this.getTotalAyatTasmiq(
+            parseInt(x.tasmiq.slice(0, 3)),
+            parseInt(x.tasmiq.slice(6, 9)),
+            parseInt(x.tasmiq.slice(3, 6)),
+            parseInt(x.tasmiq.slice(9, 12))
+          );
+          this.totalTasmiq =
+            this.totalTasmiq - totalTasmiqLama + this.totalAyatTasmiq;
+          this.totalAyat[parseInt(this.selectedMonth) - 1] = this.totalTasmiq;
           this.totalMarkList[
             this.totalMarkList.findIndex(
               x => x.tarikh == this.date.slice(8, 10)
@@ -487,6 +584,7 @@ export default {
             tasmiq: convertTasmiq
           };
         } else {
+          this.totalTasmiq = this.totalTasmiq + this.totalAyatTasmiq;
           this.totalMarkList.unshift({
             tarikh: this.date.slice(8, 10),
             ulasan: this.ulasan,
@@ -494,14 +592,20 @@ export default {
             tasmiq: convertTasmiq
           });
           this.totalMarkList.sort((a, b) => a.tarikh - b.tarikh);
-          this.totalDay[parseInt(this.selectedMonth)-1] = this.totalMarkList.length;
+          this.totalDay[
+            parseInt(this.selectedMonth) - 1
+          ] = this.totalMarkList.length;
+          this.totalAyat[parseInt(this.selectedMonth) - 1] = this.totalTasmiq;
         }
         fb.db
           .collection("users")
           .doc(this.student.key)
           .collection("mark")
           .doc(this.selectedYear)
-          .set({totalDay:this.totalDay}, { merge: true });
+          .set(
+            { totalDay: this.totalDay, totalAyat: this.totalAyat },
+            { merge: true }
+          );
 
         fb.db
           .collection("users")
@@ -510,7 +614,10 @@ export default {
           .doc(this.selectedYear)
           .collection("bulan")
           .doc(this.selectedMonth)
-          .set({ mark: this.totalMarkList }, { merge: true })
+          .set(
+            { mark: this.totalMarkList, totalTasmiq: this.totalTasmiq },
+            { merge: true }
+          )
           .then(() => {
             this.loading = false;
             this.edit = true;
@@ -577,7 +684,12 @@ export default {
       return this.date.slice(5, 7);
     },
     totalAyatTasmiq: function() {
-      return this.getTotalAyatTasmiq(this.selectedSurahStart, this.selectedSurahEnd, this.selectedSurahStart, this.selectedNumberAyatEnd)
+      return this.getTotalAyatTasmiq(
+        this.selectedSurahStart,
+        this.selectedSurahEnd,
+        this.selectedNumberAyatStart,
+        this.selectedNumberAyatEnd
+      );
     },
     selectedSurahStartTotalAyat: function() {
       //code bawah ni utk generate array mengikut nilai yang ditetapkan
@@ -611,4 +723,8 @@ export default {
     }
   }
 };
+//todo = move totaltasmiq to level year sama ngn totalday n totalayat di dlm firestore
 </script>
+
+
+
