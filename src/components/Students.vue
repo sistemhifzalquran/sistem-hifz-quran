@@ -56,7 +56,7 @@
       </v-list>
     </v-menu>
     <div v-if="showStudentsTasmiqTarget == true">
-      <StudentsTasmiqTarget/>
+      <StudentsTasmiqTarget />
     </div>
     <v-card flat v-for="student in studentDataList" :key="student.ic">
       <v-layout row wrap class="pa-3">
@@ -78,7 +78,7 @@
               class="white--text my-2 caption"
             >{{student.mark}}%</v-btn>
             <div v-if="showPrestasi == student.ic">
-              <Prestasi v-bind:student="student"/>
+              <Prestasi v-bind:student="student" />
             </div>
           </div>
         </v-flex>
@@ -91,7 +91,7 @@
               class="white--text my-2 caption success"
             >TASMIQ</v-btn>
             <div v-if="showTasmiq == student.ic">
-              <Tasmiq v-bind:student="student"/>
+              <Tasmiq v-bind:student="student" />
             </div>
           </div>
         </v-flex>
@@ -142,7 +142,13 @@ export default {
     };
   },
   computed: {
-    ...mapState(["studentDataList", "currentGroup", "noStudent", "studentList"])
+    ...mapState([
+      "studentDataList",
+      "currentGroup",
+      "noStudent",
+      "studentList",
+      "targetTasmiq"
+    ]),
   },
   methods: {
     resolveShowTasmiq(x) {
@@ -191,6 +197,9 @@ export default {
                   .doc(credential.user.uid)
                   .collection("mark")
                   .doc(new Date().toISOString().slice(0, 4))
+                  .set({
+                    totalDay: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    totalAyat: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
                   });
                 this.studentDataList.push({
                   status: 0,

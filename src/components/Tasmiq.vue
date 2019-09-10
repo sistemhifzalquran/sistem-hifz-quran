@@ -175,6 +175,7 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 const fb = require("../firebaseConfig.js");
 export default {
   created() {
@@ -485,6 +486,22 @@ export default {
             parseInt(this.selectedMonth) - 1
           ] = this.totalMarkList.length;
           this.totalAyat[parseInt(this.selectedMonth) - 1] = this.totalTasmiq;
+            //y n for ni untuk kira % total markah prestasi
+          let y = 0;
+          let z = 0;
+          for(var u=0;u<=this.TargetTasmiqCurrentYear.length-1; u++){
+            
+            y = y + this.TargetTasmiqCurrentYear[u];
+            z = z +this.totalAyat[u];
+          }
+          let zy = Math.round((z/y)*100)
+        fb.db
+          .collection("users")
+          .doc(this.student.key)
+          .set(
+            { mark:zy },
+            { merge: true }
+          );
           fb.db
             .collection("users")
             .doc(this.student.key)
@@ -596,6 +613,22 @@ export default {
           ] = this.totalMarkList.length;
           this.totalAyat[parseInt(this.selectedMonth) - 1] = this.totalTasmiq;
         }
+          //y n for ni untuk kira % total markah prestasi
+          let y = 0;
+          let z = 0;
+          for(var ii=0;ii<=this.TargetTasmiqCurrentYear.length-1; ii++){
+            
+            y = y + this.TargetTasmiqCurrentYear[ii];
+            z = z +this.totalAyat[ii];
+          }
+          let zy = Math.round((z/y)*100)
+        fb.db
+          .collection("users")
+          .doc(this.student.key)
+          .set(
+            { mark:zy },
+            { merge: true }
+          );
         fb.db
           .collection("users")
           .doc(this.student.key)
@@ -655,6 +688,276 @@ export default {
     }
   },
   computed: {
+    ...mapState(["targetTasmiq"]),
+     TargetTasmiqCurrentYear: function() {
+      function getTotalAyatTasmiq(surahStart, surahEnd, ayatStart, ayatEnd) {
+        let verses = [
+          7,
+          286,
+          200,
+          176,
+          120,
+          165,
+          206,
+          75,
+          129,
+          109,
+          123,
+          111,
+          43,
+          52,
+          99,
+          128,
+          111,
+          110,
+          98,
+          135,
+          112,
+          78,
+          118,
+          64,
+          77,
+          227,
+          93,
+          88,
+          69,
+          60,
+          34,
+          30,
+          73,
+          54,
+          45,
+          83,
+          182,
+          88,
+          75,
+          85,
+          54,
+          53,
+          89,
+          59,
+          37,
+          35,
+          38,
+          29,
+          18,
+          45,
+          60,
+          49,
+          62,
+          55,
+          78,
+          96,
+          29,
+          22,
+          24,
+          13,
+          14,
+          11,
+          11,
+          18,
+          12,
+          12,
+          30,
+          52,
+          52,
+          44,
+          28,
+          28,
+          20,
+          56,
+          40,
+          31,
+          50,
+          40,
+          46,
+          42,
+          29,
+          19,
+          36,
+          25,
+          22,
+          17,
+          19,
+          26,
+          30,
+          20,
+          15,
+          21,
+          11,
+          8,
+          8,
+          19,
+          5,
+          8,
+          8,
+          11,
+          11,
+          8,
+          3,
+          9,
+          5,
+          4,
+          7,
+          3,
+          6,
+          3,
+          5,
+          4,
+          5,
+          6
+        ];
+        if (surahStart == surahEnd) {
+          return ayatEnd - ayatStart + 1;
+        } else {
+          let totalAyatOfAllSurah = 0;
+          let x = surahStart;
+          while (x < surahEnd) {
+            totalAyatOfAllSurah += verses[x - 1];
+            x++;
+          }
+          return (
+            verses[surahStart - 1] -
+            ayatStart +
+            1 +
+            ayatEnd +
+            totalAyatOfAllSurah -
+            verses[surahStart - 1]
+          );
+        }
+      }
+      if (
+        this.targetTasmiq.filter(
+          snapshot =>
+            snapshot.year ===
+            new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+              .toISOString()
+              .slice(0, 4)
+        )[0]
+      ) {
+        let x = [];
+        let y = this.targetTasmiq.filter(
+          snapshot =>
+            snapshot.year ===
+            new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+              .toISOString()
+              .slice(0, 4)
+        )[0];
+        let z = y.month;
+        let currentMonth = parseInt(
+          new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+            .toISOString()
+            .slice(5, 7)
+        );
+        let currentDay = parseInt(
+          new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+            .toISOString()
+            .slice(8, 10)
+        );
+        //for dibawah adalah untuk calculate total target tasmiq dan dimasukkan ke dalam array sehingga bulan latest,
+        //bulan terakhir tu akan ditapis ikut minggu dan hanya tambah ikut minggu semasa.
+        for (var i = 0; i <= currentMonth - 1; i++) {
+          let totalAyat1 = 0;
+          let totalAyat2 = 0;
+          let totalAyat3 = 0;
+          let totalAyat4 = 0;
+          if (i < currentMonth-1) {
+            let surahStart1 = parseInt(z[i].minggu1.slice(0, 3));
+            let ayatStart1 = parseInt(z[i].minggu1.slice(3, 6));
+            let surahEnd1 = parseInt(z[i].minggu1.slice(6, 9));
+            let ayatEnd1 = parseInt(z[i].minggu1.slice(9, 12));
+            totalAyat1 = getTotalAyatTasmiq(
+              surahStart1,
+              surahEnd1,
+              ayatStart1,
+              ayatEnd1
+            );
+            let surahStart2 = parseInt(z[i].minggu2.slice(0, 3));
+            let ayatStart2 = parseInt(z[i].minggu2.slice(3, 6));
+            let surahEnd2 = parseInt(z[i].minggu2.slice(6, 9));
+            let ayatEnd2 = parseInt(z[i].minggu2.slice(9, 12));
+            totalAyat2 = getTotalAyatTasmiq(
+              surahStart2,
+              surahEnd2,
+              ayatStart2,
+              ayatEnd2
+            );
+            let surahStart3 = parseInt(z[i].minggu3.slice(0, 3));
+            let ayatStart3 = parseInt(z[i].minggu3.slice(3, 6));
+            let surahEnd3 = parseInt(z[i].minggu3.slice(6, 9));
+            let ayatEnd3 = parseInt(z[i].minggu3.slice(9, 12));
+            totalAyat3 = getTotalAyatTasmiq(
+              surahStart3,
+              surahEnd3,
+              ayatStart3,
+              ayatEnd3
+            );
+            let surahStart4 = parseInt(z[i].minggu4.slice(0, 3));
+            let ayatStart4 = parseInt(z[i].minggu4.slice(3, 6));
+            let surahEnd4 = parseInt(z[i].minggu4.slice(6, 9));
+            let ayatEnd4 = parseInt(z[i].minggu4.slice(9, 12));
+            totalAyat4 = getTotalAyatTasmiq(
+              surahStart4,
+              surahEnd4,
+              ayatStart4,
+              ayatEnd4
+            );
+          } else if ((i = currentMonth - 1)) {
+            let surahStart1 = parseInt(z[i].minggu1.slice(0, 3));
+            let ayatStart1 = parseInt(z[i].minggu1.slice(3, 6));
+            let surahEnd1 = parseInt(z[i].minggu1.slice(6, 9));
+            let ayatEnd1 = parseInt(z[i].minggu1.slice(9, 12));
+            totalAyat1 = getTotalAyatTasmiq(
+              surahStart1,
+              surahEnd1,
+              ayatStart1,
+              ayatEnd1
+            );
+
+            if (currentDay > 7) {
+              let surahStart2 = parseInt(z[i].minggu2.slice(0, 3));
+              let ayatStart2 = parseInt(z[i].minggu2.slice(3, 6));
+              let surahEnd2 = parseInt(z[i].minggu2.slice(6, 9));
+              let ayatEnd2 = parseInt(z[i].minggu2.slice(9, 12));
+              totalAyat2 = getTotalAyatTasmiq(
+                surahStart2,
+                surahEnd2,
+                ayatStart2,
+                ayatEnd2
+              );
+              if (currentDay > 14) {
+                let surahStart3 = parseInt(z[i].minggu3.slice(0, 3));
+                let ayatStart3 = parseInt(z[i].minggu3.slice(3, 6));
+                let surahEnd3 = parseInt(z[i].minggu3.slice(6, 9));
+                let ayatEnd3 = parseInt(z[i].minggu3.slice(9, 12));
+                totalAyat3 = getTotalAyatTasmiq(
+                  surahStart3,
+                  surahEnd3,
+                  ayatStart3,
+                  ayatEnd3
+                );
+                if (currentDay > 21) {
+                  let surahStart4 = parseInt(z[i].minggu4.slice(0, 3));
+                  let ayatStart4 = parseInt(z[i].minggu4.slice(3, 6));
+                  let surahEnd4 = parseInt(z[i].minggu4.slice(6, 9));
+                  let ayatEnd4 = parseInt(z[i].minggu4.slice(9, 12));
+                  totalAyat4 = getTotalAyatTasmiq(
+                    surahStart4,
+                    surahEnd4,
+                    ayatStart4,
+                    ayatEnd4
+                  );
+                }
+              }
+            }
+          }
+          x[i] = totalAyat1 + totalAyat2 + totalAyat3 + totalAyat4;
+        }
+        return x;
+      } else {
+        return [];
+      }
+    },
     selectedDateMark: function() {
       if (
         this.totalMarkList.filter(
