@@ -387,7 +387,12 @@ export default {
     tasmiqData: function() {
       let x = { name: "Tasmiq", data: {} };
       let lastTotal = 0;
+      let checkTarikh = 0;
       this.totalMarkList.forEach(item => {
+        for(let i = checkTarikh;i<=parseInt(item.tarikh);i++){
+          x.data[i] = lastTotal+0;
+          checkTarikh = checkTarikh+1;
+        }
         let y =
           lastTotal +
           this.getTotalAyatTasmiq(
@@ -402,20 +407,54 @@ export default {
       return [{name: "haribulan",data:{0:0,1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0,10:0,11:0,12:0,13:0,14:0,15:0,16:0,17:0,18:0,19:0,20:0,21:0,22:0,23:0,24:0,25:0,26:0,27:0,28:0}},this.targetTasmiqData, x];
     },
     targetTasmiqData: function() {
+      function averagekanData(totalAyat){
+        let x = 0;
+      if(totalAyat <=7){
+        x = 1;
+      }else if (totalAyat >7){
+        x = Math.floor(totalAyat/7)
+      }
+      return x;
+      }
+      
+      let minggu1total= this.minggu1.totalAyat
+      let minggu2total = minggu1total+ this.minggu2.totalAyat
+      let minggu3total = minggu2total + this.minggu3.totalAyat
+      
       return {
         name: "Target Tasmiq",
         data: {
-          7: this.minggu1.totalAyat,
-          14: this.minggu1.totalAyat + this.minggu2.totalAyat,
-          21:
-            this.minggu1.totalAyat +
-            this.minggu2.totalAyat +
-            this.minggu3.totalAyat,
-          28:
-            this.minggu1.totalAyat +
-            this.minggu2.totalAyat +
-            this.minggu3.totalAyat +
-            this.minggu4.totalAyat
+          1: averagekanData(this.minggu1.totalAyat),
+          2: averagekanData(this.minggu1.totalAyat)*2,
+          3: averagekanData(this.minggu1.totalAyat)*3,
+          4: averagekanData(this.minggu1.totalAyat)*4,
+          5: averagekanData(this.minggu1.totalAyat)*5,
+          6: averagekanData(this.minggu1.totalAyat)*6,
+          7: averagekanData(this.minggu1.totalAyat)*7+this.minggu1.totalAyat%7,
+
+          8: minggu1total + averagekanData(this.minggu2.totalAyat),
+          9: minggu1total + averagekanData(this.minggu2.totalAyat)*2,
+          10:minggu1total + averagekanData(this.minggu2.totalAyat)*3,
+          11:minggu1total + averagekanData(this.minggu2.totalAyat)*4,
+          12:minggu1total + averagekanData(this.minggu2.totalAyat)*5,
+          13:minggu1total + averagekanData(this.minggu2.totalAyat)*6,
+          14:minggu1total + averagekanData(this.minggu2.totalAyat)*7 +this.minggu2.totalAyat%7,
+
+          15:minggu2total + averagekanData(this.minggu3.totalAyat),
+          16:minggu2total + averagekanData(this.minggu3.totalAyat)*2,
+          17:minggu2total + averagekanData(this.minggu3.totalAyat)*3,
+          18:minggu2total + averagekanData(this.minggu3.totalAyat)*4,
+          19:minggu2total + averagekanData(this.minggu3.totalAyat)*5,
+          20:minggu2total + averagekanData(this.minggu3.totalAyat)*6,
+          21:minggu2total + averagekanData(this.minggu3.totalAyat)*7 +this.minggu3.totalAyat%7,
+
+          22:minggu3total + averagekanData(this.minggu4.totalAyat),
+          23:minggu3total + averagekanData(this.minggu4.totalAyat)*2,
+          24:minggu3total + averagekanData(this.minggu4.totalAyat)*3,
+          25:minggu3total + averagekanData(this.minggu4.totalAyat)*4,
+          26:minggu3total + averagekanData(this.minggu4.totalAyat)*5,
+          27:minggu3total + averagekanData(this.minggu4.totalAyat)*6,
+          28:minggu3total + averagekanData(this.minggu4.totalAyat)*7 +this.minggu4.totalAyat%7,
         }
       };
     },
