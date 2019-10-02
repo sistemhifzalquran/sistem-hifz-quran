@@ -55,7 +55,7 @@ export default new Vuex.Store({
         x = 'warning'
       }else if(doc.data().mark <= 80){
         x = 'info'
-      }else if(doc.data().mark <= 100){
+      }else if(doc.data().mark > 80){
         x = 'success'
       }
       state.studentDataList.push({
