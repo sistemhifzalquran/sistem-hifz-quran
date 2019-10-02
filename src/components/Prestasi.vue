@@ -20,7 +20,7 @@
           </v-list>
         </v-menu>
       </v-card-title>
-      <line-chart xtitle="Haribulan" ytitle="Jumlah Ayat" :data="tasmiqData"></line-chart>
+      <line-chart :download="{background: '#fff'}"  xtitle="Haribulan" ytitle="Jumlah Ayat" :data="tasmiqData"></line-chart>
     </v-card>
   </v-dialog>
 </template>
