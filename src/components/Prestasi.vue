@@ -387,10 +387,10 @@ export default {
     tasmiqData: function() {
       let x = { name: "Tasmiq", data: {} };
       let lastTotal = 0;
-      let checkTarikh = 0;
+      let checkTarikh = 1;
       this.totalMarkList.forEach(item => {
         for(let i = checkTarikh;i<=parseInt(item.tarikh);i++){
-          x.data[i] = lastTotal+0;
+          x.data[i] = lastTotal;
           checkTarikh = checkTarikh+1;
         }
         let y =
@@ -404,7 +404,7 @@ export default {
         x.data[parseInt(item.tarikh)] = y;
         lastTotal = y;
       });
-      return [{name: "haribulan",data:{0:0,1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0,10:0,11:0,12:0,13:0,14:0,15:0,16:0,17:0,18:0,19:0,20:0,21:0,22:0,23:0,24:0,25:0,26:0,27:0,28:0}},this.targetTasmiqData, x];
+      return [this.targetTasmiqData, x];
     },
     targetTasmiqData: function() {
       function averagekanData(totalAyat){
