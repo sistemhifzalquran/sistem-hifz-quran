@@ -65,6 +65,7 @@ export default new Vuex.Store({
         name: doc.data().name,
         key: doc.id
       });
+      state.studentDataList.sort(function(a, b){return a.mark - b.mark});
     },
     setCurrentUser(state, val) {
       state.currentUser = val;
