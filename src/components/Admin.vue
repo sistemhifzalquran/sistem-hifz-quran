@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <Navbar v-on:increment="renderNews"/>
-    <v-content>
+    <v-content class="deep-purple lighten-2">
       <News :key="total"/>
       <Students :key="total2"/>
     </v-content>

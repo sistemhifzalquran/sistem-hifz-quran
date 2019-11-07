@@ -4,7 +4,7 @@
       <span>{{snackMsg}}</span>
     </v-snackbar>
     <v-menu offset-y>
-      <v-btn flat slot="activator" color="grey">
+      <v-btn flat slot="activator">
         <v-icon left>expand_more</v-icon>
         <span>Urus Pelajar</span>
       </v-btn>
@@ -45,7 +45,7 @@
     </v-menu>
 
     <v-menu offset-y>
-      <v-btn slot="activator" flat color="grey">
+      <v-btn slot="activator" flat >
         <v-icon left>expand_more</v-icon>
         <span>Urus Tasmiq</span>
       </v-btn>
