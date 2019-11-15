@@ -3,6 +3,15 @@
     <v-snackbar v-model="snack" :timeout="2500" top color="success">
       <span>{{snackMsg}}</span>
     </v-snackbar>
+    <v-btn style="min-width: 0" flat @click="sortStudentDataListBy = 'name'">
+      <v-icon left>sort_by_alpha</v-icon>
+    </v-btn>
+    <v-btn style="min-width: 0" flat @click="sortStudentDataListBy = 'markLowest'">
+      <v-icon left>trending_down</v-icon>
+    </v-btn>
+    <v-btn style="min-width: 0" flat @click="sortStudentDataListBy = 'markHighest'">
+      <v-icon left>trending_up</v-icon>
+    </v-btn>
     <v-menu offset-y>
       <v-btn flat slot="activator">
         <v-icon left>expand_more</v-icon>
@@ -45,7 +54,7 @@
     </v-menu>
 
     <v-menu offset-y>
-      <v-btn slot="activator" flat >
+      <v-btn slot="activator" flat>
         <v-icon left>expand_more</v-icon>
         <span>Urus Tasmiq</span>
       </v-btn>
@@ -58,7 +67,7 @@
     <div v-if="showStudentsTasmiqTarget == true">
       <StudentsTasmiqTarget />
     </div>
-    <v-card flat v-for="student in studentDataList" :key="student.ic">
+    <v-card flat v-for="student in studentDataListSorted" :key="student.ic">
       <v-layout row wrap class="pa-3">
         <v-flex xs12 md6>
           <div class="caption grey--text">Nama Pelajar</div>
@@ -118,6 +127,7 @@ export default {
   },
   data() {
     return {
+      sortStudentDataListBy: "markHighest",
       showStudentsTasmiqTarget: false,
       showTasmiq: false,
       showPrestasi: false,
@@ -149,6 +159,26 @@ export default {
       "studentList",
       "targetTasmiq"
     ]),
+    studentDataListSorted: function() {
+      let x = this.studentDataList;
+      if (this.sortStudentDataListBy == "markLowest") {
+        return x.sort(function(a, b) {
+          return a.mark - b.mark;
+        });
+      } else if (this.sortStudentDataListBy == "markHighest") {
+        return x.sort(function(a, b) {
+          return b.mark - a.mark;
+        });
+      } else if (this.sortStudentDataListBy == "name") {
+        return x.sort(function(a, b) {
+          var textA = a.name.toUpperCase();
+          var textB = b.name.toUpperCase();
+          return textA < textB ? -1 : textA > textB ? 1 : 0;
+        });
+      } else {
+        return x;
+      }
+    }
   },
   methods: {
     resolveShowTasmiq(x) {
