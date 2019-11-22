@@ -7,10 +7,10 @@
       <v-icon left>sort_by_alpha</v-icon>
     </v-btn>
     <v-btn style="min-width: 0" flat @click="sortStudentDataListBy = 'markLowest'">
-      <v-icon left>trending_down</v-icon>
+      <v-icon left>trending_up</v-icon>
     </v-btn>
     <v-btn style="min-width: 0" flat @click="sortStudentDataListBy = 'markHighest'">
-      <v-icon left>trending_up</v-icon>
+      <v-icon left>trending_down</v-icon>
     </v-btn>
     <v-menu offset-y>
       <v-btn flat slot="activator">

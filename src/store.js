@@ -12,8 +12,8 @@ function initialState() {
     currentGroup: '',
     currentUser: null,
     userProfile: {},
-    noStudent: true,
-    targetTasmiq:[],
+    noStudent: false,
+    targetTasmiq: [],
   }
 }
 export default new Vuex.Store({
@@ -49,13 +49,13 @@ export default new Vuex.Store({
     },
     onCreatedStudentDataList: (state, doc) => {
       var x = '';
-      if(doc.data().mark <= 40){
+      if (doc.data().mark <= 40) {
         x = 'error'
-      }else if(doc.data().mark <= 60){
+      } else if (doc.data().mark <= 60) {
         x = 'warning'
-      }else if(doc.data().mark <= 80){
+      } else if (doc.data().mark <= 80) {
         x = 'info'
-      }else if(doc.data().mark > 80){
+      } else if (doc.data().mark > 80) {
         x = 'success'
       }
       state.studentDataList.push({
@@ -148,12 +148,14 @@ export default new Vuex.Store({
             .doc(context.state.currentGroup)
             .get()
             .then(function (snapshot) {
+
               context.commit("onCreatedNewsList", snapshot.data().timeline)
               context.commit("onCreatedStudentList", snapshot.data().students)
               context.commit("onCreatedTargetTasmiq", snapshot.data().targetTasmiq)
+              context.state.noStudent = true;
               snapshot.data().students.forEach(id => {
-                context.state.noStudent = false;
                 if (id != "") {
+                  context.state.noStudent = false;
                   fb.db
                     .collection("users")
                     .doc(id)
